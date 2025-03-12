@@ -1,8 +1,8 @@
-import { Calendar, ChevronDown, Home, Inbox, Search, Settings, Users, LucideIcon } from "lucide-react"
-import { Link, useLocation, useNavigate } from "react-router-dom"
+import { ChevronDown, Home, Inbox, Search, Settings, Users, LucideIcon } from "lucide-react"
+import { useLocation, useNavigate } from "react-router-dom"
 import { useSidebar } from "@/components/ui/sidebar"
 import { cn } from "@/lib/utils"
-import React, { useState, useEffect, useCallback, useRef } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { Button } from "@/components/ui/button"
 
 interface SubMenuItem {

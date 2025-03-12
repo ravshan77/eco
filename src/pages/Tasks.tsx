@@ -117,18 +117,18 @@ const Tasks = () => {
     }
   };
 
-  const getStatusText = (status: Task['status']) => {
-    switch (status) {
-      case 'completed':
-        return 'Bajarilgan';
-      case 'in_progress':
-        return 'Jarayonda';
-      case 'pending':
-        return 'Kutilmoqda';
-      default:
-        return status;
-    }
-  };
+  // const getStatusText = (status: Task['status']) => {
+  //   switch (status) {
+  //     case 'completed':
+  //       return 'Bajarilgan';
+  //     case 'in_progress':
+  //       return 'Jarayonda';
+  //     case 'pending':
+  //       return 'Kutilmoqda';
+  //     default:
+  //       return status;
+  //   }
+  // };
 
   const getPriorityColor = (priority: Task['priority']) => {
     switch (priority) {

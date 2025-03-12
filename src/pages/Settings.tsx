@@ -63,6 +63,8 @@ const Settings = () => {
   };
 
   const handleProfileSubmit = async (data: ProfileFormData) => {
+    console.log(data)
+
     try {
       setIsProfileLoading(true);
       // Bu yerda profilni yangilash API logikasi bo'ladi
@@ -76,6 +78,7 @@ const Settings = () => {
   };
 
   const handleSystemSubmit = async (data: SystemFormData) => {
+    console.log(data)
     try {
       setIsSystemLoading(true);
       // Bu yerda tizim sozlamalarini yangilash API logikasi bo'ladi

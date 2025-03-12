@@ -9,7 +9,6 @@ import { tasksAPI } from '../../services/api';
 import { LoadingSpinner } from '../../components/ui/loading-spinner';
 import { LoadingOverlay } from '../../components/ui/loading-overlay';
 import { toast } from '../../components/ui/use-toast';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useNavigate } from "react-router-dom"
 
 const Tasks = () => {
@@ -32,25 +31,25 @@ const Tasks = () => {
   const [isActionLoading, setIsActionLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  // const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const itemsPerPage = 10;
 
-  const currentYear = new Date().getFullYear()
-  const years = Array.from({ length: 10 }, (_, i) => currentYear - i)
-  const months = [
-    { value: "1", label: "Yanvar" },
-    { value: "2", label: "Fevral" },
-    { value: "3", label: "Mart" },
-    { value: "4", label: "Aprel" },
-    { value: "5", label: "May" },
-    { value: "6", label: "Iyun" },
-    { value: "7", label: "Iyul" },
-    { value: "8", label: "Avgust" },
-    { value: "9", label: "Sentabr" },
-    { value: "10", label: "Oktabr" },
-    { value: "11", label: "Noyabr" },
-    { value: "12", label: "Dekabr" },
-  ]
+  // const currentYear = new Date().getFullYear()
+  // const years = Array.from({ length: 10 }, (_, i) => currentYear - i)
+  // const months = [
+  //   { value: "1", label: "Yanvar" },
+  //   { value: "2", label: "Fevral" },
+  //   { value: "3", label: "Mart" },
+  //   { value: "4", label: "Aprel" },
+  //   { value: "5", label: "May" },
+  //   { value: "6", label: "Iyun" },
+  //   { value: "7", label: "Iyul" },
+  //   { value: "8", label: "Avgust" },
+  //   { value: "9", label: "Sentabr" },
+  //   { value: "10", label: "Oktabr" },
+  //   { value: "11", label: "Noyabr" },
+  //   { value: "12", label: "Dekabr" },
+  // ]
 
   const fetchTasks = async () => {
     try {
@@ -77,30 +76,30 @@ const Tasks = () => {
     // fetchTasks();
   }, []);
 
-  const handleAddTask = async (data: Omit<Task, 'id' | 'createdAt'>) => {
-    try {
-      setIsActionLoading(true);
-      await tasksAPI.create({
-        ...data,
-        createdAt: new Date().toISOString(),
-      });
-      await fetchTasks();
-      setIsAddModalOpen(false);
-      toast({
-        title: "Muvaffaqiyatli qo'shildi",
-        description: "Yangi topshiriq qo'shildi",
-      });
-    } catch (err) {
-      toast({
-        variant: "destructive",
-        title: "Xatolik yuz berdi",
-        description: "Topshiriq qo'shishda xatolik yuz berdi",
-      });
-      console.error('Error creating task:', err);
-    } finally {
-      setIsActionLoading(false);
-    }
-  };
+  // const handleAddTask = async (data: Omit<Task, 'id' | 'createdAt'>) => {
+  //   try {
+  //     setIsActionLoading(true);
+  //     await tasksAPI.create({
+  //       ...data,
+  //       createdAt: new Date().toISOString(),
+  //     });
+  //     await fetchTasks();
+  //     setIsAddModalOpen(false);
+  //     toast({
+  //       title: "Muvaffaqiyatli qo'shildi",
+  //       description: "Yangi topshiriq qo'shildi",
+  //     });
+  //   } catch (err) {
+  //     toast({
+  //       variant: "destructive",
+  //       title: "Xatolik yuz berdi",
+  //       description: "Topshiriq qo'shishda xatolik yuz berdi",
+  //     });
+  //     console.error('Error creating task:', err);
+  //   } finally {
+  //     setIsActionLoading(false);
+  //   }
+  // };
 
   const handleStatusChange = async (taskId: string, newStatus: Task['status']) => {
     try {
@@ -150,18 +149,18 @@ const Tasks = () => {
     }
   };
 
-  const getStatusText = (status: Task['status']) => {
-    switch (status) {
-      case 'completed':
-        return 'Bajarilgan';
-      case 'in_progress':
-        return 'Jarayonda';
-      case 'pending':
-        return 'Kutilmoqda';
-      default:
-        return status;
-    }
-  };
+  // const getStatusText = (status: Task['status']) => {
+  //   switch (status) {
+  //     case 'completed':
+  //       return 'Bajarilgan';
+  //     case 'in_progress':
+  //       return 'Jarayonda';
+  //     case 'pending':
+  //       return 'Kutilmoqda';
+  //     default:
+  //       return status;
+  //   }
+  // };
 
   const getPriorityColor = (priority: Task['priority']) => {
     switch (priority) {

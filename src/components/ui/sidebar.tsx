@@ -2,9 +2,9 @@ import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
-const SIDEBAR_WIDTH = 280
-const SIDEBAR_COLLAPSED_WIDTH = 80
-const SIDEBAR_COOKIE = "sidebar-state"
+// const SIDEBAR_WIDTH = 280
+// const SIDEBAR_COLLAPSED_WIDTH = 80
+// const SIDEBAR_COOKIE = "sidebar-state"
 
 const sidebarVariants = cva(
   "fixed left-0 top-0 z-40 h-screen bg-background transition-all duration-300 overflow-hidden",
@@ -166,7 +166,7 @@ export function SidebarGroupLabel({
   className,
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) {
-  const { isOpen } = useSidebar()
+  // const { isOpen } = useSidebar()
   
   return (
     <div
@@ -193,8 +193,9 @@ export function SidebarMenuItem({
   submenuKey,
   ...props
 }: SidebarMenuItemProps) {
-  const { isOpen, isSubMenuOpen, toggleSubMenu } = useSidebar()
-  const isCurrentSubmenuOpen = submenuKey ? isSubMenuOpen[submenuKey] : false
+  const { isOpen, toggleSubMenu } = useSidebar()
+  // const isCurrentSubmenuOpen = submenuKey ? isSubMenuOpen[submenuKey] : false
+
 
   return (
     <div

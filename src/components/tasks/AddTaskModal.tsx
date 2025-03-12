@@ -13,6 +13,7 @@ import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { LoadingSpinner } from '../ui/loading-spinner';
 import { Task } from '../../types';
+import { console } from 'inspector';
 
 const taskSchema = z.object({
   title: z.string().min(1, "Topshiriq nomini kiriting"),
@@ -43,12 +44,17 @@ const AddTaskModal = ({ open, onOpenChange, onSubmit }: AddTaskModalProps) => {
   });
 
   const handleSubmit = async (data: FormData) => {
+    console.log(data);
     try {
       setIsSubmitting(true);
-      await onSubmit({
-        ...data,
-        status: 'pending',
-      });
+      const d: Task = { id:"100", title:"title", description:"description", priority:"medium", deadline:"title", assignedTo:"#82ca9d", createdAt:"#8884d8", status:"pending" }
+      await onSubmit({ ...d  });
+
+      // await onSubmit({
+      //   ...data,
+      //   status: 'pending',
+      // });
+
       form.reset();
     } finally {
       setIsSubmitting(false);
