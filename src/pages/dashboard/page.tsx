@@ -7,23 +7,23 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 const data = [
   {
-    name: "Yan",
+    name: "Ali",
     total: 2400,
   },
   {
-    name: "Fev",
+    name: "Vali",
     total: 1398,
   },
   {
-    name: "Mar",
+    name: "Xuja",
     total: 9800,
   },
   {
-    name: "Apr",
+    name: "Sattor",
     total: 3908,
   },
   {
-    name: "May",
+    name: "MAxmud",
     total: 4800,
   },
   {
@@ -38,22 +38,22 @@ const data = [
 
 const employeeData = [
   {
-    name: "Yan",
+    name: "Ali",
     active: 400,
     inactive: 240,
   },
   {
-    name: "Fev",
+    name: "Vali",
     active: 300,
     inactive: 139,
   },
   {
-    name: "Mar",
+    name: "Maxmud",
     active: 500,
     inactive: 980,
   },
   {
-    name: "Apr",
+    name: "Sattor",
     active: 390,
     inactive: 480,
   },
@@ -212,12 +212,12 @@ const chartConfigArea = {
 
 
 const chartDataRadar = [
-  { month: "January", desktop: 186, mobile: 80 },
-  { month: "February", desktop: 305, mobile: 200 },
-  { month: "March", desktop: 237, mobile: 120 },
-  { month: "April", desktop: 73, mobile: 190 },
-  { month: "May", desktop: 209, mobile: 130 },
-  { month: "June", desktop: 214, mobile: 140 },
+  { month: "Ali", desktop: 186, mobile: 80 },
+  { month: "Vali", desktop: 305, mobile: 200 },
+  { month: "Sattor", desktop: 237, mobile: 120 },
+  { month: "Maxmud", desktop: 73, mobile: 190 },
+  { month: "Salim", desktop: 209, mobile: 130 },
+  { month: "Komil", desktop: 214, mobile: 140 },
 ]
 const chartConfigRadar = {
   desktop: {
@@ -262,19 +262,12 @@ export default function Dashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Jami daromad
+              Bajarilmagan vazifalar
             </CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">45,231,890 so'm</div>
-            <p className="text-xs text-muted-foreground">
-              <span className="text-green-500 inline-flex items-center">
-                <ArrowUp className="h-4 w-4 mr-1" />
-                +20.1%
-              </span>{" "}
-              o'tgan oyga nisbatan
-            </p>
+            <div className="text-2xl font-bold">+45</div>
           </CardContent>
         </Card>
         <Card>
@@ -285,14 +278,7 @@ export default function Dashboard() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">+573</div>
-            <p className="text-xs text-muted-foreground">
-              <span className="text-green-500 inline-flex items-center">
-                <ArrowUpRight className="h-4 w-4 mr-1" />
-                +201
-              </span>{" "}
-              so'ngi bir soatda
-            </p>
+            <div className="text-2xl font-bold">23</div>
           </CardContent>
         </Card>
         <Card>
@@ -304,31 +290,17 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">12,234</div>
-            <p className="text-xs text-muted-foreground">
-              <span className="text-green-500 inline-flex items-center">
-                <ArrowUp className="h-4 w-4 mr-1" />
-                +19%
-              </span>{" "}
-              o'tgan oyga nisbatan
-            </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Ish haqi to'lovlari
+              Berilgan KPI ballari
             </CardTitle>
             <CreditCard className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">23,500,000 so'm</div>
-            <p className="text-xs text-muted-foreground">
-              <span className="text-red-500 inline-flex items-center">
-                <ArrowDown className="h-4 w-4 mr-1" />
-                -4%
-              </span>{" "}
-              o'tgan oyga nisbatan
-            </p>
+            <div className="text-2xl font-bold">23,500,000</div>
           </CardContent>
         </Card>
       </div>

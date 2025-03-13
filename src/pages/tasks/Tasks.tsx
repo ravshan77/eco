@@ -5,7 +5,6 @@ import { Input } from '../../components/ui/input';
 import { Clock } from 'lucide-react';
 import { Task } from '../../types';
 import { tasksAPI } from '../../services/api';
-// import AddTaskModal from '../../components/tasks/AddTaskModal';
 import { LoadingSpinner } from '../../components/ui/loading-spinner';
 import { LoadingOverlay } from '../../components/ui/loading-overlay';
 import { toast } from '../../components/ui/use-toast';
@@ -31,25 +30,7 @@ const Tasks = () => {
   const [isActionLoading, setIsActionLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  // const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const itemsPerPage = 10;
-
-  // const currentYear = new Date().getFullYear()
-  // const years = Array.from({ length: 10 }, (_, i) => currentYear - i)
-  // const months = [
-  //   { value: "1", label: "Yanvar" },
-  //   { value: "2", label: "Fevral" },
-  //   { value: "3", label: "Mart" },
-  //   { value: "4", label: "Aprel" },
-  //   { value: "5", label: "May" },
-  //   { value: "6", label: "Iyun" },
-  //   { value: "7", label: "Iyul" },
-  //   { value: "8", label: "Avgust" },
-  //   { value: "9", label: "Sentabr" },
-  //   { value: "10", label: "Oktabr" },
-  //   { value: "11", label: "Noyabr" },
-  //   { value: "12", label: "Dekabr" },
-  // ]
 
   const fetchTasks = async () => {
     try {
@@ -75,31 +56,6 @@ const Tasks = () => {
   useEffect(() => {
     // fetchTasks();
   }, []);
-
-  // const handleAddTask = async (data: Omit<Task, 'id' | 'createdAt'>) => {
-  //   try {
-  //     setIsActionLoading(true);
-  //     await tasksAPI.create({
-  //       ...data,
-  //       createdAt: new Date().toISOString(),
-  //     });
-  //     await fetchTasks();
-  //     setIsAddModalOpen(false);
-  //     toast({
-  //       title: "Muvaffaqiyatli qo'shildi",
-  //       description: "Yangi topshiriq qo'shildi",
-  //     });
-  //   } catch (err) {
-  //     toast({
-  //       variant: "destructive",
-  //       title: "Xatolik yuz berdi",
-  //       description: "Topshiriq qo'shishda xatolik yuz berdi",
-  //     });
-  //     console.error('Error creating task:', err);
-  //   } finally {
-  //     setIsActionLoading(false);
-  //   }
-  // };
 
   const handleStatusChange = async (taskId: string, newStatus: Task['status']) => {
     try {
@@ -148,19 +104,6 @@ const Tasks = () => {
         return 'bg-gray-100 text-gray-700';
     }
   };
-
-  // const getStatusText = (status: Task['status']) => {
-  //   switch (status) {
-  //     case 'completed':
-  //       return 'Bajarilgan';
-  //     case 'in_progress':
-  //       return 'Jarayonda';
-  //     case 'pending':
-  //       return 'Kutilmoqda';
-  //     default:
-  //       return status;
-  //   }
-  // };
 
   const getPriorityColor = (priority: Task['priority']) => {
     switch (priority) {
@@ -213,24 +156,6 @@ const Tasks = () => {
             <div className="w-full sm:max-w-md">
               <Input type="search" placeholder="Qidirish..." className="w-full" value={searchQuery} onChange={handleSearch} />
             </div>
-            {/* <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 w-full sm:w-auto">
-              <Select>
-                <SelectTrigger className="w-full sm:w-[180px]">
-                  <SelectValue placeholder="Oy" />
-                </SelectTrigger>
-                <SelectContent>
-                  {months.map((month) => ( <SelectItem key={month.value} value={month.value}> {month.label} </SelectItem> ))}
-                </SelectContent>
-              </Select>
-              <Select>
-                <SelectTrigger className="w-full sm:w-[120px]">
-                  <SelectValue placeholder="Yil" />
-                </SelectTrigger>
-                <SelectContent>
-                  {years.map((year) => ( <SelectItem key={year} value={year.toString()}> {year} </SelectItem> ))}
-                </SelectContent>
-              </Select>
-            </div> */}
           </div>
 
           <div className="rounded-md border overflow-x-auto">
@@ -297,12 +222,6 @@ const Tasks = () => {
           </div>
         </Card>
       </div>
-
-      {/* <AddTaskModal
-        open={isAddModalOpen}
-        onOpenChange={setIsAddModalOpen}
-        onSubmit={handleAddTask}
-      /> */}
     </>
   );
 };

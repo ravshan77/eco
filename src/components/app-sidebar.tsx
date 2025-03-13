@@ -50,23 +50,23 @@ const items: MenuItem[] = [
   {
     title: "Xodimlar",
     icon: Users,
-    submenuKey: "employees",
+    submenuKey: "workers",
     submenu: [
       {
         title: "Barcha xodimlar",
-        url: "/employees",
+        url: "/workers",
       },
       {
         title: "Yangi xodim",
-        url: "/employees/new",
+        url: "/workers/new",
       },
       {
         title: "Faol xodimlar",
-        url: "/employees/active",
+        url: "/workers/active",
       },
       {
         title: "Arxivdagi xodimlar",
-        url: "/employees/archived",
+        url: "/workers/archived",
       },
     ],
   },
@@ -84,7 +84,7 @@ const items: MenuItem[] = [
 
 export function AppSidebar() {
   const { isOpen, toggle } = useSidebar()
-  const [openSubmenus, setOpenSubmenus] = useState<Set<string>>(new Set(['tasks', 'employees']))
+  const [openSubmenus, setOpenSubmenus] = useState<Set<string>>(new Set(['tasks', 'workers']))
   const location = useLocation()
   const navigate = useNavigate()
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024)

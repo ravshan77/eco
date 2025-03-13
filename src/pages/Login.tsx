@@ -10,6 +10,7 @@ const Login = () => {
   const handleLogin = () => {
     // Temporary: Just set a dummy token and navigate
     localStorage.setItem('token', 'dummy-token');
+    window.location.reload();
     navigate('/');
   };
 
@@ -23,19 +24,12 @@ const Login = () => {
           </p>
         </div>
 
-        <Button 
-          onClick={handleLogin}
-          className="w-full"
-        >
+        <Button  onClick={handleLogin} className="w-full">
           Kirish
         </Button>
 
         <div className="mt-6 flex items-center justify-center">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-          >
+          <Button variant="ghost" size="sm" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} >
             {theme === 'dark' ? "Yorug' rejim" : "Qorong'i rejim"}
           </Button>
         </div>

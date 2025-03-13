@@ -4,10 +4,10 @@ import { Toaster } from './components/ui/toaster';
 import { SidebarProvider } from './components/ui/sidebar';
 import MainLayout from './layouts/MainLayout';
 import Dashboard from './pages/dashboard/page';
-import Employees from './pages/employees/Employees';
-import NewEmployee from './pages/employees/NewEmployee';
-import ActiveEmployees from './pages/employees/ActiveEmployees';
-import ArchivedEmployees from './pages/employees/ArchivedEmployees';
+import Employees from './pages/workers/Workers';
+import NewEmployee from './pages/workers/NewEmployee';
+import ActiveEmployees from './pages/workers/ActiveEmployees';
+import ArchivedEmployees from './pages/workers/ArchivedEmployees';
 import Tasks from './pages/tasks/Tasks';
 import NewTasks from './pages/tasks/NewTasks';
 import CompletedTasks from './pages/tasks/CompletedTasks';
@@ -27,12 +27,12 @@ function App() {
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="*" element={<NotFound />} />
-            <Route path="/" element={ localStorage.getItem('token') ? ( <MainLayout /> ) : ( <Navigate to="/login" replace /> )}>
+            <Route path="/" element={ true ? ( <MainLayout /> ) : ( <Navigate to="/login" replace /> )}>
               <Route index element={<Dashboard />} />
-              <Route path="employees" element={<Employees />} />
-              <Route path="employees/new" element={<NewEmployee />} />
-              <Route path="employees/active" element={<ActiveEmployees />} />
-              <Route path="employees/archived" element={<ArchivedEmployees />} />
+              <Route path="workers" element={<Employees />} />
+              <Route path="workers/new" element={<NewEmployee />} />
+              <Route path="workers/active" element={<ActiveEmployees />} />
+              <Route path="workers/archived" element={<ArchivedEmployees />} />
               <Route path="tasks" element={<Tasks />} />
               <Route path="tasks/new" element={<NewTasks />} />
               <Route path="tasks/completed" element={<CompletedTasks />} />

@@ -10,8 +10,7 @@ const api = axios.create({
 });
 
 // Request interceptor
-api.interceptors.request.use(
-  (config) => {
+api.interceptors.request.use((config) => {
     const token = localStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -19,11 +18,7 @@ api.interceptors.request.use(
     return config;
   },
   (error) => {
-    toast({
-      variant: "destructive",
-      title: "So'rov yuborishda xatolik",
-      description: error.message || "Noma'lum xatolik yuz berdi",
-    });
+    toast({ variant: "destructive", title: "So'rov yuborishda xatolik", description: error.message || "Noma'lum xatolik yuz berdi" });
     return Promise.reject(error);
   }
 );
@@ -35,17 +30,9 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
       window.location.href = '/login';
-      toast({
-        variant: "destructive",
-        title: "Avtorizatsiya xatosi",
-        description: "Iltimos, qaytadan tizimga kiring",
-      });
+      toast({ variant: "destructive", title: "Avtorizatsiya xatosi", description: "Iltimos, qaytadan tizimga kiring" });
     } else {
-      toast({
-        variant: "destructive",
-        title: "Xatolik yuz berdi",
-        description: error.response?.data?.message || error.message || "Noma'lum xatolik yuz berdi",
-      });
+      toast({ variant: "destructive", title: "Xatolik yuz berdi", description: error.response?.data?.message || error.message || "Noma'lum xatolik yuz berdi" });
     }
     return Promise.reject(error);
   }
@@ -54,11 +41,7 @@ api.interceptors.response.use(
 // Universal API functions
 const apiRequest = async <T>(method: string, url: string, data?: any): Promise<T> => {
   try {
-    const response = await api.request<T>({
-      method,
-      url,
-      data,
-    });
+    const response = await api.request<T>({ method, url, data });
     return response.data;
   } catch (error) {
     console.error('API Error:', error);
@@ -68,8 +51,7 @@ const apiRequest = async <T>(method: string, url: string, data?: any): Promise<T
 
 // Auth
 export const authAPI = {
-  login: (email: string, password: string) =>
-    apiRequest<{ user: User; token: string }>('POST', '/auth/login', { email, password }),
+  login: (email: string, password: string) => apiRequest<{ user: User; token: string }>('POST', '/auth/login', { email, password }),
   logout: () => apiRequest('POST', '/auth/logout'),
 };
 
@@ -80,18 +62,15 @@ export const tasksAPI = {
   create: (task: Omit<Task, 'id'>) => apiRequest<Task>('POST', '/tasks', task),
   update: (id: string, task: Partial<Task>) => apiRequest<Task>('PATCH', `/tasks/${id}`, task),
   delete: (id: string) => apiRequest('DELETE', `/tasks/${id}`),
-  updateStatus: (id: string, status: Task['status']) =>
-    apiRequest<Task>('PATCH', `/tasks/${id}/status`, { status }),
+  updateStatus: (id: string, status: Task['status']) => apiRequest<Task>('PATCH', `/tasks/${id}/status`, { status }),
 };
 
 // Employees
 export const employeesAPI = {
   getAll: () => apiRequest<Employee[]>('GET', '/employees'),
   getById: (id: string) => apiRequest<Employee>('GET', `/employees/${id}`),
-  create: (employee: Omit<Employee, 'id' | 'createdAt'>) => 
-    apiRequest<Employee>('POST', '/employees', { ...employee, createdAt: new Date().toISOString() }),
-  update: (id: string, employee: Partial<Employee>) =>
-    apiRequest<Employee>('PATCH', `/employees/${id}`, employee),
+  create: (employee: Omit<Employee, 'id' | 'createdAt'>) =>  apiRequest<Employee>('POST', '/employees', { ...employee, createdAt: new Date().toISOString() }),
+  update: (id: string, employee: Partial<Employee>) => apiRequest<Employee>('PATCH', `/employees/${id}`, employee),
   delete: (id: string) => apiRequest('DELETE', `/employees/${id}`),
 };
 
@@ -99,18 +78,15 @@ export const employeesAPI = {
 export const usersAPI = {
   getAll: () => apiRequest<User[]>('GET', '/users'),
   getById: (id: string) => apiRequest<User>('GET', `/users/${id}`),
-  create: (user: Omit<User, 'id' | 'createdAt' | 'lastLogin'>) =>
-    apiRequest<User>('POST', '/users', user),
+  create: (user: Omit<User, 'id' | 'createdAt' | 'lastLogin'>) => apiRequest<User>('POST', '/users', user),
   update: (id: string, user: Partial<User>) => apiRequest<User>('PATCH', `/users/${id}`, user),
   delete: (id: string) => apiRequest('DELETE', `/users/${id}`),
-  updateStatus: (id: string, status: User['status']) =>
-    apiRequest<User>('PATCH', `/users/${id}/status`, { status }),
+  updateStatus: (id: string, status: User['status']) => apiRequest<User>('PATCH', `/users/${id}/status`, { status }),
 };
 
 // Dashboard
 export const dashboardAPI = {
-  getStats: () =>
-    apiRequest('GET', '/dashboard/stats'),
+  getStats: () => apiRequest('GET', '/dashboard/stats'),
 };
 
 export default api; 
