@@ -4,6 +4,7 @@ import { useSidebar } from "@/components/ui/sidebar"
 import { cn } from "@/lib/utils"
 import { useState, useEffect, useCallback, useRef } from "react"
 import { Button } from "@/components/ui/button"
+import Logo from "../assets/logo.svg"
 
 interface SubMenuItem {
   title: string
@@ -158,32 +159,15 @@ export function AppSidebar() {
   return (
     <>
       {/* Overlay for mobile */}
-      {isMobile && isOpen && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-30 backdrop-blur-sm transition-opacity duration-300"
-          aria-hidden="true"
-          onClick={() => toggle()}
-        />
-      )}
+      {isMobile && isOpen && (<div className="fixed inset-0 bg-black/50 z-30 backdrop-blur-sm transition-opacity duration-300" aria-hidden="true" onClick={() => toggle()}/>)}
       
-      <aside 
-        ref={sidebarRef}
-        className={cn(
-          "fixed inset-y-0 left-0 z-40 flex flex-col border-r bg-card",
-          "transition-transform duration-300 ease-in-out",
-          isOpen ? "w-64 shadow-lg" : "w-0 lg:w-[70px]",
-          isMobile && !isOpen && "-translate-x-full",
-          isMobile && isOpen && "translate-x-0"
-        )}
-      >
+      <aside ref={sidebarRef} className={cn("fixed inset-y-0 left-0 z-40 flex flex-col border-r bg-card", "transition-transform duration-300 ease-in-out", isOpen ? "w-64 shadow-lg" : "w-0 lg:w-[70px]", isMobile && !isOpen && "-translate-x-full", isMobile && isOpen && "translate-x-0")}>
         {/* Sidebar header */}
-        <div className="flex h-14 items-center border-b">
-          <h2 className={cn(
-            "font-semibold truncate transition-all duration-300 px-4",
-            isOpen ? "text-lg" : "text-sm text-center w-full"
-          )}>
+        <div className="flex h-14 items-center border-b justify-center">
+          <img src={Logo} alt="Logo" className="w-full h-full mt-2" />
+          {/* <h2 className={cn("font-semibold truncate transition-all duration-300 px-4", isOpen ? "text-lg" : "text-sm text-center w-full")}>
             {isOpen ? "Admin Panel" : "A-P"}
-          </h2>
+          </h2> */}
         </div>
 
         {/* Sidebar content */}
@@ -191,42 +175,19 @@ export function AppSidebar() {
           <nav className="grid gap-1 px-2">
             {items.map((item) => (
               <div key={item.title}>
-                <Button
-                  variant="ghost"
-                  className={cn(
-                    "w-full",
-                    isOpen ? "justify-between px-4" : "justify-center p-2",
-                    "hover:bg-accent hover:text-accent-foreground",
-                    (location.pathname === item.url || isSubmenuItemActive(item)) && "bg-accent text-accent-foreground"
-                  )}
-                  onClick={() => handleItemClick(item)}
-                >
+                <Button variant="ghost" className={cn("w-full", isOpen ? "justify-between px-4" : "justify-center p-2", "hover:bg-accent hover:text-accent-foreground", (location.pathname === item.url || isSubmenuItemActive(item)) && "bg-accent text-accent-foreground")} onClick={() => handleItemClick(item)} >
                   <span className="flex items-center gap-3">
                     {item.icon && <item.icon className="h-5 w-5 shrink-0" />}
                     {isOpen && <span className="truncate">{item.title}</span>}
                   </span>
                   {isOpen && item.submenu && (
-                    <ChevronDown
-                      className={cn(
-                        "h-4 w-4 shrink-0 transition-transform duration-200",
-                        openSubmenus.has(item.submenuKey!) && "rotate-180"
-                      )}
-                    />
+                    <ChevronDown className={cn("h-4 w-4 shrink-0 transition-transform duration-200", openSubmenus.has(item.submenuKey!) && "rotate-180" )} />
                   )}
                 </Button>
                 {isOpen && item.submenu && item.submenuKey && openSubmenus.has(item.submenuKey) && (
                   <div className="mt-1 ml-4 grid gap-1">
                     {item.submenu.map((subitem) => (
-                      <Button
-                        key={subitem.title}
-                        variant="ghost"
-                        className={cn(
-                          "w-full justify-start",
-                          "hover:bg-accent hover:text-accent-foreground",
-                          location.pathname === subitem.url && "bg-accent text-accent-foreground"
-                        )}
-                        onClick={() => handleItemClick(subitem)}
-                      >
+                      <Button key={subitem.title} variant="ghost" onClick={() => handleItemClick(subitem)} className={cn("w-full justify-start", "hover:bg-accent hover:text-accent-foreground", location.pathname === subitem.url && "bg-accent text-accent-foreground" )}>
                         {subitem.title}
                       </Button>
                     ))}

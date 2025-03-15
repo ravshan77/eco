@@ -1,4 +1,4 @@
-import { Task } from '../../types';
+import { Task } from '../../types/types';
 import { MONTHS } from '@/constants';
 import { tasksAPI } from '../../services/api';
 import { Card } from '../../components/ui/card';
@@ -178,16 +178,16 @@ const TaskTab1 = () => {
               <td className="p-2"> <div className="text-left space-x-1"> {task.deadline} </div> </td>
               <td className="p-2">{task.description}</td>
               <td className="p-2">{task.createdAt}</td>
-              <td className="p-2"> <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${getPriorityColor(task.priority)}`}> {getPriorityText(task.priority)} </span> </td>
+              <td className="p-2"> <span className={`flex items-center justify-center rounded-full px-2 py-1 text-xs font-medium ${getPriorityColor(task.priority)}`}> {getPriorityText(task.priority)} </span> </td>
               <td className="p-2">
                 <select value={task.status} onChange={(e) => handleStatusChange(task.id, e.target.value as Task['status']) } className={`rounded-full px-2 py-1 text-xs font-medium ${getStatusColor( task.status)}`} >
                   <option value="pending">Kutilmoqda</option>
-                  <option value="in_progress">Jarayonda</option>
+                  <option value="in_progress">Bajarilgan</option>
                   <option value="completed">Bajarilgan</option>
                 </select>
               </td>
-              <td className="p-2"> <div className="flex items-center space-x-1"> <span>{task.id}</span> </div> </td>
-              <td className="p-2"> <div className="flex items-center space-x-1"> <span>{getStatusTextComplate(task.status)}</span> </div> </td>
+              <td className="p-2"> <div className="flex items-center space-x-1"> <span>50</span> </div> </td>
+              <td className="p-2"> <div className={`flex items-center space-x-1 ${getStatusColor( task.status)}`}> <span>{getStatusTextComplate(task.status)}</span> </div> </td>
             </tr>
           ))}
         </tbody>

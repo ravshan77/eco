@@ -7,7 +7,7 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { LoadingSpinner } from '../ui/loading-spinner';
-import { Task } from '../../types';
+import { Task } from '../../types/types';
 
 const taskSchema = z.object({
   title: z.string().min(1, "Topshiriq nomini kiriting"),
@@ -93,7 +93,7 @@ const AddTaskModal = ({ open, onOpenChange, onSubmit }: AddTaskModalProps) => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="priority">Prioritet</Label>
+            <Label htmlFor="priority">Muhimligi</Label>
             <select
               id="priority"
               {...form.register('priority')}

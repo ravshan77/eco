@@ -3,7 +3,7 @@ import { Card } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Plus, Search, Clock } from 'lucide-react';
-import { Task } from '../types';
+import { Task } from '../types/types';
 import { tasksAPI } from '../services/api';
 import AddTaskModal from '../components/tasks/AddTaskModal';
 import { LoadingSpinner } from '../components/ui/loading-spinner';

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { User, Task, Employee } from '../types';
+import { User, Task, TWorkers } from '../types/types';
 import { toast } from '../components/ui/use-toast';
 
 const api = axios.create({
@@ -39,7 +39,7 @@ api.interceptors.response.use(
 );
 
 // Universal API functions
-const apiRequest = async <T>(method: string, url: string, data?: any): Promise<T> => {
+export const apiRequest = async <T>(method: string, url: string, data?: any): Promise<T> => {
   try {
     const response = await api.request<T>({ method, url, data });
     return response.data;
@@ -67,10 +67,10 @@ export const tasksAPI = {
 
 // Employees
 export const employeesAPI = {
-  getAll: () => apiRequest<Employee[]>('GET', '/employees'),
-  getById: (id: string) => apiRequest<Employee>('GET', `/employees/${id}`),
-  create: (employee: Omit<Employee, 'id' | 'createdAt'>) =>  apiRequest<Employee>('POST', '/employees', { ...employee, createdAt: new Date().toISOString() }),
-  update: (id: string, employee: Partial<Employee>) => apiRequest<Employee>('PATCH', `/employees/${id}`, employee),
+  getAll: () => apiRequest<TWorkers[]>('GET', '/employees'),
+  getById: (id: string) => apiRequest<TWorkers>('GET', `/employees/${id}`),
+  create: (employee: Omit<TWorkers, 'id' | 'createdAt'>) =>  apiRequest<TWorkers>('POST', '/employees', { ...employee, createdAt: new Date().toISOString() }),
+  update: (id: string, employee: Partial<TWorkers>) => apiRequest<TWorkers>('PATCH', `/employees/${id}`, employee),
   delete: (id: string) => apiRequest('DELETE', `/employees/${id}`),
 };
 

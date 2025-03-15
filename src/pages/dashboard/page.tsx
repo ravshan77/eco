@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, Label, Line, LineChart, Pie, PieChart, PolarAngleAxis, PolarGrid, Radar, RadarChart, ResponsiveContainer, XAxis, YAxis } from "recharts"
-import { Activity, CreditCard, DollarSign, Users, ArrowUp, ArrowDown, ArrowUpRight, TrendingUp, ArrowDownFromLine, ArrowUpFromLine } from "lucide-react"
+import { Activity, CreditCard, DollarSign, Users, TrendingUp, ArrowDownFromLine, ArrowUpFromLine } from "lucide-react"
 import { ChartConfig, ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { useMemo, useState } from "react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -70,11 +70,11 @@ const employeeData = [
 ]
 
 const chartData = [
-  { browser: "chrome", visitors: 275, fill: "var(--color-chrome)" },
-  { browser: "safari", visitors: 200, fill: "var(--color-safari)" },
-  { browser: "firefox", visitors: 287, fill: "var(--color-firefox)" },
-  { browser: "edge", visitors: 173, fill: "var(--color-edge)" },
-  { browser: "other", visitors: 190, fill: "var(--color-other)" },
+  { browser: "chrome", visitors: 27, fill: "var(--color-chrome)" },
+  { browser: "safari", visitors: 20, fill: "var(--color-safari)" },
+  { browser: "firefox", visitors: 87, fill: "var(--color-firefox)" },
+  { browser: "edge", visitors: 73, fill: "var(--color-edge)" },
+  { browser: "other", visitors: 90, fill: "var(--color-other)" },
 ]
 const chartConfig = {
   visitors: {
@@ -262,52 +262,52 @@ export default function Dashboard() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Bajarilmagan vazifalar
+              Jami bajarilmagan vazifalar
             </CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">+45</div>
+            <div className="text-2xl font-bold text-green-500">+45</div>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Faol xodimlar
+              Jarayondagi topshiriqlar 
             </CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">23</div>
+            <div className="text-2xl font-bold text-green-700">23</div>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Bajarilgan topshiriqlar
+              Muddatdan o'tgan topshiriqlar
             </CardTitle>
             <Activity className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">12,234</div>
+            <div className="text-2xl font-bold text-red-700">17</div>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Berilgan KPI ballari
+              Bajarilmay qolingan vazifalar
             </CardTitle>
             <CreditCard className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">23,500,000</div>
+            <div className="text-2xl font-bold">5</div>
           </CardContent>
         </Card>
       </div>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
         <Card className="col-span-4">
           <CardHeader>
-            <CardTitle>Oylik ko'rsatkichlar</CardTitle>
+            <CardTitle>Xodimlar bo'yicha oylik ko'rsatkichlar ballar</CardTitle>
           </CardHeader>
           <CardContent className="pl-2">
             <ResponsiveContainer width="100%" height={350}>
@@ -380,10 +380,10 @@ export default function Dashboard() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-8">
-        <Card className="col-span-4">
+        <Card className="col-span-8">
           <CardHeader className="items-center pb-0">
-            <CardTitle>Pie Chart - Donut with Text</CardTitle>
-            <CardDescription>January - June 2024</CardDescription>
+            <CardTitle>Belgilangan muddatdagi ko'rsatgichlar</CardTitle>
+            <CardDescription>Fevral - Mart 2025</CardDescription>
           </CardHeader>
           <CardContent className="flex-1 pb-0">
             <ChartContainer config={chartConfig} className="mx-auto aspect-square max-h-[250px]" >
@@ -412,7 +412,7 @@ export default function Dashboard() {
                               y={(viewBox.cy || 0) + 24}
                               className="fill-muted-foreground"
                             >
-                              Visitors
+                              Topshiriqlar
                             </tspan>
                           </text>
                         )
@@ -425,15 +425,12 @@ export default function Dashboard() {
           </CardContent>
           <CardFooter className="flex-col gap-2 text-sm">
             <div className="flex items-center gap-2 font-medium leading-none">
-              Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-            </div>
-            <div className="leading-none text-muted-foreground">
-              Showing total visitors for the last 6 months
+              O'tgan chorakga nisbatan 5.2% yaxshiroq <TrendingUp className="h-4 w-4" />
             </div>
           </CardFooter>
         </Card>
 
-        <Card className="col-span-4">
+        {/* <Card className="col-span-4">
           <CardHeader className="items-center pb-4">
             <CardTitle>Radar Chart - Icons</CardTitle>
             <CardDescription>
@@ -460,16 +457,16 @@ export default function Dashboard() {
               January - June 2024
             </div>
           </CardFooter>
-        </Card>
+        </Card> */}
       </div>
 
       <div>
         <Card>
           <CardHeader className="flex items-center gap-2 space-y-0 border-b py-5 sm:flex-row">
             <div className="grid flex-1 gap-1 text-center sm:text-left">
-              <CardTitle>Area Chart - Interactive</CardTitle>
+              <CardTitle> <b>Tojiyev Rustambek Rasulovich</b> ish grafigi</CardTitle>
               <CardDescription>
-                Showing total visitors for the last 3 months
+                Oxirgi 3 oydagi jami bajargan va bajarmagan topshiriqlar grafik ko'rinishda 
               </CardDescription>
             </div>
             <Select value={timeRange} onValueChange={setTimeRange}>

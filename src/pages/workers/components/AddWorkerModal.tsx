@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Task } from '@/types';
+import { Task, TWorkers } from '@/types/types';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -21,7 +21,7 @@ type FormData = z.infer<typeof taskSchema>;
 interface AddWorkerModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSubmit: (data: Omit<Task, 'id' | 'createdAt'>) => Promise<void>;
+  onSubmit: (data: Omit<TWorkers, 'id' | 'date'>) => Promise<void>;
 }
 
 const AddWorkerModal = ({ open, onOpenChange, onSubmit }: AddWorkerModalProps) => {
@@ -37,7 +37,7 @@ const AddWorkerModal = ({ open, onOpenChange, onSubmit }: AddWorkerModalProps) =
     try {
       setIsSubmitting(true);
       const d: Task = { id:"100", title:"title", description:"description", priority:"medium", deadline:"title", assignedTo:"#82ca9d", createdAt:"#8884d8", status:"pending" }
-      await onSubmit({ ...d  });
+      // await onSubmit({ ...d  });
 
       // await onSubmit({
       //   ...data,

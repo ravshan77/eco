@@ -17,7 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../ui/select';
-import { User } from '../../types';
+import { User } from '../../types/types';
 
 const formSchema = z.object({
   username: z.string().min(2, "Foydalanuvchi nomi kamida 2 ta harfdan iborat bo'lishi kerak"),

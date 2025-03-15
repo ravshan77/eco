@@ -1,5 +1,5 @@
 import TaskTab1 from './TaskTab1';
-import { Task } from '../../types';
+import { Task } from '../../types/types';
 import { useState, useEffect } from 'react';
 import { tasksAPI } from '../../services/api';
 import { Button } from '../../components/ui/button';
@@ -72,82 +72,79 @@ const TasksToEmployee = () => {
       <div className="space-y-4 min-w-[360px]">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <Button onClick={handleGoBack} className="w-full sm:w-auto">
-            <ChevronLeft className="mr-2 h-4 w-4" />
-            Ortga
-          </Button>
+            <ChevronLeft className="mr-2 h-4 w-4" /> Ortga </Button>
           <h2 className="text-2xl font-bold">{name}ning ish stoli</h2>
           <Button onClick={handleToggleAddModal} className="w-full sm:w-auto">
-            <Plus className="mr-2 h-4 w-4" />
-            Yangi topshiriq
+            <Plus className="mr-2 h-4 w-4" /> Yangi topshiriq
           </Button>
         </div>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium"> Baxolash tizimi (KPI) </CardTitle>
+              <CardTitle className="text-sm font-medium"> KPI ballari (shu oy)</CardTitle>
               <DollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">100 ball</div>
-              <p className="text-xs text-muted-foreground">
+              <div className="text-2xl font-bold">85 ball</div>
+              {/* <p className="text-xs text-muted-foreground">
                 <span className="text-green-500 inline-flex items-center"> 
                    <ArrowUp className="h-4 w-4 mr-1" /> +20% 
                 </span>{" "} o'tgan oyga nisbatan
-              </p>
+              </p> */}
             </CardContent>
           </Card>
           
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium"> Qo'shimcha balli </CardTitle>
+              <CardTitle className="text-sm font-medium"> Jami bajargan vazifalari </CardTitle>
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">+50</div>
-              <p className="text-xs text-muted-foreground">
+              {/* <p className="text-xs text-muted-foreground">
                 <span className="text-green-500 inline-flex items-center"> <ArrowUpRight className="h-4 w-4 mr-1" /> +80 </span>{" "}
                 o'tgan haftaga nisbatan
-              </p>
+              </p> */}
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium"> Bajarilgan topshiriqlar </CardTitle>
+              <CardTitle className="text-sm font-medium"> Mudatdan o'tgan topshiriqlar </CardTitle>
               <Activity className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">34 ta</div>
-              <p className="text-xs text-muted-foreground">
+              <div className="text-2xl font-bold">12 ta</div>
+              {/* <p className="text-xs text-muted-foreground">
                 <span className="text-green-500 inline-flex items-center">
                   <ArrowUp className="h-4 w-4 mr-1" />
                   +19 ta
                 </span>{" "}
                 o'tgan oyga nisbatan
-              </p>
+              </p> */}
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium"> Ish haqi to'lovlari </CardTitle>
+              <CardTitle className="text-sm font-medium"> Shu oyda qoldirga ish kunlari </CardTitle>
               <CreditCard className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">23,500,000 so'm</div>
-              <p className="text-xs text-muted-foreground">
+              <div className="text-2xl font-bold">4 kun</div>
+              {/* <p className="text-xs text-muted-foreground">
                 <span className="text-red-500 inline-flex items-center">
                   <ArrowDown className="h-4 w-4 mr-1" />
-                  -4%
+                  26
                 </span>{" "}
-                o'tgan oyga nisbatan
-              </p>
+                 kundan
+              </p> */}
             </CardContent>
           </Card>
         </div>
 
         <Tabs value={tab} onValueChange={handleTab} className="w-full">
           <TabsList className="mb-4 h-14 w-full flex justify-between">
-            <TabsTrigger value="tasks" className='h-11 w-full text-lg'>Lavozim bo'yicha kunlik vazifalar</TabsTrigger>
+            <TabsTrigger value="tasks" className='h-11 w-full text-lg'>Kunlik vazifalar (Lavozim yoʼriqnoma)</TabsTrigger>
             <TabsTrigger value="performance" className='h-11 w-full text-lg'>Qo'shimcha vazifalar</TabsTrigger>
             <TabsTrigger value="info" className='h-11 w-full text-lg'>Topshiriqlar</TabsTrigger>
             <TabsTrigger value="other" className='h-11 w-full text-lg'>Yillik va oylik reja</TabsTrigger>

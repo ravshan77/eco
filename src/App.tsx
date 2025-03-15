@@ -4,7 +4,7 @@ import { Toaster } from './components/ui/toaster';
 import { SidebarProvider } from './components/ui/sidebar';
 import MainLayout from './layouts/MainLayout';
 import Dashboard from './pages/dashboard/page';
-import Employees from './pages/workers/Workers';
+import Workers from './pages/workers/Workers';
 import NewEmployee from './pages/workers/NewEmployee';
 import ActiveEmployees from './pages/workers/ActiveEmployees';
 import ArchivedEmployees from './pages/workers/ArchivedEmployees';
@@ -18,6 +18,7 @@ import Login from './pages/Login';
 import './styles/globals.css';
 import NotFound from './pages/NotFound';
 import TasksToEmployee from './pages/tasks/TasksToEmployee';
+import AddWorkerPage from './pages/workers/AddWorkerPage';
 
 function App() {
   return (
@@ -29,8 +30,9 @@ function App() {
             <Route path="*" element={<NotFound />} />
             <Route path="/" element={ true ? ( <MainLayout /> ) : ( <Navigate to="/login" replace /> )}>
               <Route index element={<Dashboard />} />
-              <Route path="workers" element={<Employees />} />
+              <Route path="workers" element={<Workers />} />
               <Route path="workers/new" element={<NewEmployee />} />
+              <Route path="workers/add-new-worker" element={<AddWorkerPage />} />
               <Route path="workers/active" element={<ActiveEmployees />} />
               <Route path="workers/archived" element={<ArchivedEmployees />} />
               <Route path="tasks" element={<Tasks />} />

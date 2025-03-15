@@ -3,7 +3,7 @@ import { Card } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Plus, Search, Clock } from 'lucide-react';
-import { Employee } from '../types';
+import { TWorkers } from '../types/types';
 import { employeesAPI } from '../services/api';
 import AddEmployeeModal from '../components/employees/AddEmployeeModal';
 
@@ -19,7 +19,7 @@ const formatDate = (dateString: string) => {
 };
 
 const Employees = () => {
-  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [employees, setEmployees] = useState<TWorkers[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -45,7 +45,7 @@ const Employees = () => {
     fetchEmployees();
   }, []);
 
-  const handleAddEmployee = async (data: Omit<Employee, 'id' | 'createdAt'>) => {
+  const handleAddEmployee = async (data: Omit<TWorkers, 'id' | 'createdAt'>) => {
     try {
       await employeesAPI.create(data);
       fetchEmployees();
@@ -69,7 +69,7 @@ const Employees = () => {
     setCurrentPage(1);
   };
 
-  const getStatusColor = (status: Employee['status']) => {
+  const getStatusColor = (status: TWorkers['status']) => {
     switch (status) {
       case 'active':
         return 'bg-green-100 text-green-700';
@@ -136,10 +136,10 @@ const Employees = () => {
               {currentEmployees.map((employee) => (
                 <tr key={employee.id} className="border-b">
                   <td className="p-2">{employee.name}</td>
-                  <td className="p-2">{employee.email}</td>
-                  <td className="p-2">{employee.phone}</td>
-                  <td className="p-2">{employee.position}</td>
-                  <td className="p-2">{employee.department}</td>
+                  <td className="p-2">{employee.name}</td>
+                  <td className="p-2">{employee.name}</td>
+                  <td className="p-2">{employee.name}</td>
+                  <td className="p-2">{employee.name}</td>
                   <td className="p-2">
                     <span
                       className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${getStatusColor(
@@ -152,7 +152,7 @@ const Employees = () => {
                   <td className="p-2">
                     <div className="flex items-center space-x-1">
                       <Clock className="h-4 w-4 text-muted-foreground" />
-                      <span>{formatDate(employee.createdAt)}</span>
+                      <span>{formatDate(employee.date)}</span>
                     </div>
                   </td>
                 </tr>

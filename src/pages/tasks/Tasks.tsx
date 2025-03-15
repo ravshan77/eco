@@ -2,8 +2,7 @@ import { useState, useEffect, ChangeEvent } from 'react';
 import { Card } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
-import { Clock } from 'lucide-react';
-import { Task } from '../../types';
+import { Task } from '../../types/types';
 import { tasksAPI } from '../../services/api';
 import { LoadingSpinner } from '../../components/ui/loading-spinner';
 import { LoadingOverlay } from '../../components/ui/loading-overlay';
@@ -14,17 +13,17 @@ const Tasks = () => {
   const navigate = useNavigate();
 
   const [tasks, setTasks] = useState<Task[]>([ 
-    { assignedTo: '67345673456734567345673456734561', createdAt: '2025-03-11', deadline: '2025-03-11', description: 'Darxat ekish', id: '1', priority: 'high', status: 'pending', title: 'Palonchayev Pistoncha' }, 
-    { assignedTo: '67345673456734567345673456734562', createdAt: '2025-03-11', deadline: '2025-03-11', description: 'Seminar', id: '2', priority: 'high', status: 'pending', title: 'Kenjayev Islom' }, 
-    { assignedTo: '67345673456734567345673456734563', createdAt: '2025-03-11', deadline: '2025-03-11', description: 'Majlis', id: '3', priority: 'high', status: 'pending', title: 'Salimov Jamshid' }, 
-    { assignedTo: '67345673456734567345673456734564', createdAt: '2025-03-11', deadline: '2025-03-11', description: 'Tekshiruv', id: '4', priority: 'high', status: 'pending', title: 'Abdullayev Malik' }, 
-    { assignedTo: '67345673456734567345673456734565', createdAt: '2025-03-11', deadline: '2025-03-11', description: 'Bugalteriga', id: '5', priority: 'high', status: 'pending', title: 'Xojiyev Ali' }, 
-    { assignedTo: '67345673456734567345673456734566', createdAt: '2025-03-11', deadline: '2025-03-11', description: 'Dars ishlanma', id: '6', priority: 'high', status: 'pending', title: 'Abdusattorov Muxammad' }, 
-    { assignedTo: '67345673456734567345673456734567', createdAt: '2025-03-11', deadline: '2025-03-11', description: 'Hisobotlar', id: '7', priority: 'high', status: 'pending', title: 'Erkinov Baxodir' }, 
-    { assignedTo: '67345673456734567345673456734568', createdAt: '2025-03-11', deadline: '2025-03-11', description: "So'rovnoma", id: '8', priority: 'high', status: 'pending', title: 'Turaqulov Sherzod' }, 
-    { assignedTo: '67345673456734567345673456734569', createdAt: '2025-03-11', deadline: '2025-03-11', description: 'Dehqonchilik', id: '9', priority: 'high', status: 'pending', title: 'Boborajabov Baxrom' }, 
-    { assignedTo: '67345673456734567345673456734510', createdAt: '2025-03-11', deadline: '2025-03-11', description: 'Tumanlar bilan aloqa', id: '10', priority: 'high', status: 'pending', title: 'Vohidov Erkin' }, 
-    { assignedTo: '67345673456734567345673456734511', createdAt: '2025-03-11', deadline: '2025-03-11', description: 'Tashkiliy ishlar', id: '11', priority: 'high', status: 'pending', title: 'Qudratov Sardor' }, 
+    { assignedTo: '+998 (50) 324 5434', createdAt: '2025-03-11', deadline: 'Toshkent', description: "Tashkiliy-partiyaviy ishlar rais o‘rinbosari", id: '1', priority: 'high', status: 'pending', title: 'Tojiyev Rustambek' }, 
+    { assignedTo: '+998 (91) 567 6532', createdAt: '2025-03-11', deadline: 'Toshkent', description: 'Yoshlar va xotin-qizlar masalalari bo‘yicha rais', id: '2', priority: 'high', status: 'pending', title: 'Kenjayev Islom' }, 
+    { assignedTo: '+998 (33) 097 6743', createdAt: '2025-03-11', deadline: 'Toshkent', description: "Partiya tashabusi bo'lim boshlig'i", id: '3', priority: 'high', status: 'pending', title: 'Salimov Jamshid' }, 
+    { assignedTo: '+998 (94) 123 5433', createdAt: '2025-03-11', deadline: 'Toshkent', description: 'Ekologik siyosat va mafkuraviy ishlari raisni', id: '4', priority: 'high', status: 'pending', title: 'Abdullayev Malik' }, 
+    { assignedTo: '+998 (99) 435 7123', createdAt: '2025-03-11', deadline: 'Sirdaryo', description: "Sirdaryo partiya tashkiloti Kengashi raisi", id: '5', priority: 'high', status: 'pending', title: 'Xojiyev Ali' }, 
+    { assignedTo: '+998 (77) 456 7676', createdAt: '2025-03-11', deadline: 'Toshkent', description: 'Toshkent shahar partiya tashkiloti raisi', id: '6', priority: 'high', status: 'pending', title: 'Abdusattorov Muxammad' }, 
+    { assignedTo: '+998 (90) 777 0986', createdAt: '2025-03-11', deadline: 'Toshkent', description: 'Toshkent viloyati partiya tashkiloti raisi', id: '7', priority: 'high', status: 'pending', title: 'Erkinov Baxodir' }, 
+    { assignedTo: '+998 (93) 435 8798', createdAt: '2025-03-11', deadline: 'Andijon', description: "Andijon viloyati partiya tashkiloti raisi", id: '8', priority: 'high', status: 'pending', title: 'Turaqulov Sherzod' }, 
+    { assignedTo: '+998 (93) 658 2345', createdAt: '2025-03-11', deadline: "Farg'ona", description: 'Farg`ona viloyati partiya tashkiloti raisi', id: '9', priority: 'high', status: 'pending', title: 'Boborajabov Baxrom' }, 
+    { assignedTo: '+998 (98) 870 3213', createdAt: '2025-03-11', deadline: 'Namangan', description: 'Namangan viloyati partiya tashkiloti raisi', id: '10', priority: 'high', status: 'pending', title: 'Vohidov Erkin' }, 
+    { assignedTo: '+998 (95) 900 4515', createdAt: '2025-03-11', deadline: 'Buxoro', description: 'Buxoro viloyat partiya tashkiloti Kengashi Ijroiya qo‘mitasi raisi', id: '11', priority: 'high', status: 'pending', title: 'Qudratov Sardor' }, 
   ]);
   const [isLoading, setIsLoading] = useState(false);
   const [isActionLoading, setIsActionLoading] = useState(false);
@@ -162,47 +161,23 @@ const Tasks = () => {
             <table className="w-full min-w-[640px]">
               <thead>
                 <tr className="border-b bg-muted/50">
+                <th className="p-2 text-left">№</th>
                   <th className="p-2 text-left">F.I.O</th>
-                  <th className="p-2 text-left">Tavsif</th>
-                  <th className="p-2 text-left">Status</th>
-                  <th className="p-2 text-left">Prioritet</th>  
-                  <th className="p-2 text-left">Bajarilishi kerak</th>
-                  <th className="p-2 text-left">Yaratilgan</th>
+                  <th className="p-2 text-left">Lavozimi</th>
+                  <th className="p-2 text-left">Tel</th>
+                  <th className="p-2 text-left">Viloyat</th>
+                  <th className="p-2 text-left">Tug'ilgan sana</th>
                 </tr>
               </thead>
               <tbody className='cursor-pointer'>
-                {currentTasks.map((task) => (
+                {currentTasks.map((task, ind) => (
                   <tr onDoubleClick={() => onRowDoubleClick(task)} key={task.id} className="border-b">
+                    <td className="p-2 w-8">{ind}</td>
                     <td className="p-2">{task.title}</td>
                     <td className="p-2">{task.description}</td>
-                    <td className="p-2">
-                      <select
-                        value={task.status}
-                        onChange={(e) => handleStatusChange(task.id, e.target.value as Task['status']) }
-                        className={`rounded-full px-2 py-1 text-xs font-medium ${getStatusColor( task.status )}`}
-                      >
-                        <option value="pending">Kutilmoqda</option>
-                        <option value="in_progress">Jarayonda</option>
-                        <option value="completed">Bajarilgan</option>
-                      </select>
-                    </td>
-                    <td className="p-2">
-                      <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${getPriorityColor(task.priority)}`} >
-                        {getPriorityText(task.priority)}
-                      </span>
-                    </td>
-                    <td className="p-2">
-                      <div className="flex items-center space-x-1">
-                        <Clock className="h-4 w-4 text-muted-foreground" />
-                        <span>{task.deadline}</span>
-                      </div>
-                    </td>
-                    <td className="p-2">
-                      <div className="flex items-center space-x-1">
-                        <Clock className="h-4 w-4 text-muted-foreground" />
-                        <span>{task.createdAt}</span>
-                      </div>
-                    </td>
+                    <td className="p-2">{task.assignedTo}</td>
+                    <td className="p-2">{task.deadline}</td>
+                    <td className="p-2">{task.createdAt}</td>
                   </tr>
                 ))}
               </tbody>

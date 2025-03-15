@@ -17,7 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../ui/select';
-import { Employee } from '../../types';
+import { TWorkers } from '../../types/types';
 
 const formSchema = z.object({
   name: z.string().min(2, "Ism kamida 2 ta harfdan iborat bo'lishi kerak"),
@@ -31,7 +31,7 @@ const formSchema = z.object({
 interface AddEmployeeModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSubmit: (data: Omit<Employee, 'id' | 'createdAt'>) => void;
+  onSubmit: (data: Omit<TWorkers, 'id' | 'createdAt'>) => void;
 }
 
 const AddEmployeeModal = ({
@@ -52,7 +52,7 @@ const AddEmployeeModal = ({
   });
 
   const handleSubmit = (data: z.infer<typeof formSchema>) => {
-    onSubmit(data);
+    // onSubmit(data);
     form.reset();
     onOpenChange(false);
   };
