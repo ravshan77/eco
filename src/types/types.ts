@@ -7,7 +7,7 @@ export interface TWorkers {
   position_name: string;
   passport_series: string;
   birthday: string;
-  phone_number: string;
+  phone_youre: string;
   phone_additional?: string | null;
   phone_work?: string | null;
   address?: string | null;
@@ -15,12 +15,11 @@ export interface TWorkers {
   education_place?: string | null;
   photo?: string | null;
   passport_number?: string | null;
-  passport_?: string | null;
   state_id?: string | null;
   state_name?: string | null;
   region_id?: string | null;
   region_name?: string | null;
-  responsible_worker: string;
+  responsible_worker?: string | null;
   status: string;
   date: string
 }

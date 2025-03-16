@@ -1,65 +1,65 @@
 import { z } from "zod";
-import { SingleOption, TWorkers } from "@/types/types";
-import { useForm } from "react-hook-form";
+import {  useForm } from "react-hook-form";
 import { ChevronLeft } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { toast } from "@/components/ui/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { useEffect, useState } from "react";
 import { fetchRequest } from "@/services/fetchRequest";
+import { SingleOption, TWorkers } from "@/types/types";
+import { PhotoProvider, PhotoView } from "react-photo-view";
+import { formatPhoneNumber } from "@/utils/formatPhoneNumber";
+import { education_status, worker_status } from "@/constants";
+import { deleteImage, uploadImage } from "@/services/worker_image.service";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 // ✅ Validatsiya uchun zod shemasi
 const workerSchema = z.object({
+  state_id: z.string().optional(),
+  region_id: z.string().optional(),
+  position_id: z  .string(),
   name: z.string().min(3, "Ism kamida 3 ta harf bo‘lishi kerak"),
-  position_name: z.string().min(3, "Lavozim nomi kamida 3 ta harf bo‘lishi kerak"),
+  address: z.string().min(3, "Manzil kamida 3 ta harf bo‘lishi kerak").optional(),
+  phone_youre: z.string().min(9, "Telefon raqam noto‘g‘ri").max(13, "Telefon raqam noto‘g‘ri"),
   birthday: z.string().refine((val) => /^\d{4}-\d{2}-\d{2}$/.test(val), "Tug‘ilgan sanani YYYY-MM-DD formatida kiriting"),
-  phone_number: z.string().min(9, "Telefon raqam noto‘g‘ri").max(13, "Telefon raqam noto‘g‘ri"),
+
+  section_id: z.string().optional(),
+  passport_series: z.string().optional(),
   phone_additional: z.string().optional(),
   phone_work: z.string().optional(),
-  address: z.string().optional(),
   education: z.string().optional(),
   education_place: z.string().optional(),
-  passport_number: z.string().optional().refine((val) => !val || /^[A-Z]{2}\d{7}$/.test(val), "Pasport raqami 2 harf va 7 ta raqamdan iborat bo‘lishi kerak (AA1234567)"),
-  responsible_worker: z.string().min(3, "Mas'ul shaxs nomi kamida 3 ta harf bo‘lishi kerak"),
-  status: z.string().min(3, "Holat nomi kamida 3 ta harf bo‘lishi kerak"),
-  date: z.string().refine((val) => /^\d{4}-\d{2}-\d{2}$/.test(val), "Sanani YYYY-MM-DD formatida kiriting"),
-  state_id: z.string(),
-  region_id: z.string(),
-  passport_series: z.string().min(2).max(2)
+  photo: z.string().optional(),
+  passport_number: z.string().optional(),
+  responsible_worker: z.string().optional(),
+  status: z.string().optional(),     
 });
-
-// const inputs = [
-//   { name: "name", label: "F.I.O", type: "text" },
-//   { name: "position_name", label: "Lavozim", type: "text" },
-//   { name: "birthday", label: "Tug‘ilgan sana", type: "date" },
-//   { name: "phone_number", label: "Telefon raqam", type: "tel" },
-//   { name: "phone_additional", label: "Qo‘shimcha telefon", type: "tel", optional: true },
-//   { name: "phone_work", label: "Ish telefoni", type: "tel", optional: true },
-//   { name: "address", label: "Manzil", type: "text", optional: true },
-//   { name: "education", label: "Ta'lim", type: "text", optional: true },
-//   { name: "education_place", label: "O‘qish joyi", type: "text", optional: true },
-//   { name: "passport_number", label: "Pasport raqami", type: "text", optional: true },
-//   { name: "responsible_worker", label: "Mas'ul shaxs", type: "text" },
-//   { name: "status", label: "Holati", type: "text" },
-//   { name: "date", label: "Qo‘shilgan sana", type: "date" },
-// ]
 
 export default function AddWorkerPage() {
   const navigate = useNavigate();
-  const handleGoBack = () => navigate(-1);
+  const handleGoBack = () => {
+    const confirmChange = window.confirm("Siz haqiqatdan ham ushbu sahifaga o'tmoqchimisiz?");
+    if (confirmChange) {
+      navigate(-1);
+    }
+
+    return
+  
+  };
 
   const onSubmit = (data: any) => { console.log("Yangi xodim ma’lumotlari:", data) };
   const [loading, setLoading] = useState(true)
-  const [options, setOptions] = useState<{ states: SingleOption[], regions:SingleOption[], positions: SingleOption[] }>({ states: [], regions: [], positions:[] })
+  const [options, setOptions] = useState<{ states: SingleOption[], regions:SingleOption[], positions: SingleOption[], education_status: SingleOption[], worker_status: SingleOption[] }>({ states: [], regions: [], positions:[], worker_status, education_status })
 
   const form = useForm<TWorkers>({
     resolver: zodResolver(workerSchema),
-    defaultValues: { name: "", position_name: "", birthday: "", phone_number: "", responsible_worker: "", status: "", date: "" },
-    disabled: loading
+    defaultValues: {  phone_youre: "", responsible_worker: "user.admin.name" },
+    disabled: loading,
+    shouldUnregister: false,
   });
 
   const { control, setValue, formState: { errors }, handleSubmit, getValues, watch,  } = form;
@@ -139,9 +139,41 @@ export default function AddWorkerPage() {
     };
   }, []);
 
-  console.log(getValues())
-  console.log(watch("passport_number"))
-  // 
+  const imageUrl = watch("photo");
+
+  // Rasm yuklash
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setLoading(true);
+    try {
+      const response = await uploadImage(file);
+      setValue("photo", response); // Yuklangan rasm URL'sini saqlash
+      toast({ title: "Rasm yuklandi!", description: "Rasm muvaffaqiyatli yuklandi." });
+    } catch (error) {
+      toast({ variant: "destructive", title: "Xatolik", description: "Rasm yuklashda muammo yuz berdi." });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Rasmni o‘chirish
+  const handleImageDelete = async () => {
+    if (!imageUrl) return;
+
+    setLoading(true);
+    try {
+      await deleteImage(imageUrl);
+      setValue("photo", ""); // Rasm URL'ni tozalash
+      toast({ title: "Rasm o‘chirildi!", description: "Rasm muvaffaqiyatli o‘chirildi." });
+    } catch (error) {
+      toast({ variant: "destructive", title: "Xatolik", description: "Rasmni o‘chirishda muammo yuz berdi." });
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   return (
     <div className="space-y-4 min-w-[360px]">
@@ -155,97 +187,273 @@ export default function AddWorkerPage() {
 
       <Card className="p-4 sm:p-6">
       <Form {...form}>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              <FormField control={control} name={"name"} render={({ field: formField }) => 
-                <FormItem>
-                  <FormLabel>F.I.O</FormLabel>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+
+          <FormField control={control} name={"name"} render={({ field: formField }) => 
+            <FormItem className="w-80">
+              <FormLabel>F.I.O *</FormLabel>
+              <FormControl>
+                <Input autoFocus type={"text"} required value={formField.value} onChange={(e) => setValue(formField.name, e.target.value)} />
+              </FormControl>
+              <FormMessage>{errors[formField.name]?.message}</FormMessage>
+            </FormItem>}
+          />
+
+          <FormField control={control} name={"birthday"} render={({ field: formField }) => 
+            <FormItem className="w-28">
+              <FormLabel>Tug'ilgan sana *</FormLabel>
+              <FormControl>
+                <Input type={"date"} required min={"1930-01-01"} max={new Date().toISOString().split("T")[0]} value={formField.value} onChange={(e) => setValue(formField.name, e.target.value)} />
+              </FormControl>
+              <FormMessage>{errors[formField.name]?.message}</FormMessage>
+            </FormItem>}
+          />
+
+          <div className="flex w-80 justify-between">
+            <FormField control={control} name={"passport_series"} render={({ field: formField }) => 
+              <FormItem className="w-17">
+                <FormLabel>Pasport seriasi</FormLabel>
                   <FormControl>
-                    <Input autoFocus type={"text"} value={formField.value} onChange={(e) => setValue(formField.name, e.target.value)} />
+                    <Input value={formField.value ?? ""} className="w-16" onChange={(e) => setValue(formField.name, e.target.value.replace(/[^A-Za-z]/g, "").toUpperCase())} maxLength={2} minLength={2}/>
                   </FormControl>
                   <FormMessage>{errors[formField.name]?.message}</FormMessage>
-                </FormItem>}
-              />
+              </FormItem>}
+            />
 
-              <FormField control={control} name={"state_id"} render={({ field: formField }) => 
-                <FormItem>
-                  <FormLabel>Viloyat</FormLabel>
-                  <FormControl>
-                    <Select onValueChange={value => {
-                      setValue(formField.name, value)
-                      setValue("region_id", "")
-                    }}>
-                      <SelectTrigger className="w-full">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent >
-                        {options.states.map((state) => ( <SelectItem key={state.id} value={String(state.id)}> {state.name} </SelectItem> ))}
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormMessage>{errors[formField.name]?.message}</FormMessage>
-                </FormItem>}
-              />
+            <FormField control={control} name={"passport_number"} render={({ field: formField }) => 
+              <FormItem>
+                <FormLabel>Pasport raqami</FormLabel>
+                <FormControl>
+                  <Input type={"number"} className="w-18" maxLength={7} minLength={7} value={formField.value ?? ""} onChange={(e) => setValue(formField.name, e.target.value.replace(/\D/g, "").slice(0, 7))} />
+                </FormControl>
+                <FormMessage>{errors[formField.name]?.message}</FormMessage>
+              </FormItem>}
+            />
+          </div>
 
-              <FormField control={control} name={"region_id"} render={({ field: formField }) => 
-                <FormItem>
-                  <FormLabel>Shaxar/Tuman</FormLabel>
-                  <FormControl>
-                    <Select onValueChange={value => setValue(formField.name, value)}>
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {options.regions.map((region) => ( <SelectItem key={region.id} value={String(region.id)}> {region.name} </SelectItem> ))}
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormMessage>{errors[formField.name]?.message}</FormMessage>
-                </FormItem>}
-              />
+          <FormField control={control} name={"state_id"} render={({ field: formField }) => 
+            <FormItem className="w-80">
+              <FormLabel>Viloyat *</FormLabel>
+              <FormControl>
+                <Select required onValueChange={value => {
+                  setValue(formField.name, value)
+                  setValue("region_id", "")
+                }}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent >
+                    {options.states.map((ste) => ( <SelectItem key={ste.id} value={String(ste.id)}> {ste.name} </SelectItem> ))}
+                  </SelectContent>
+                </Select>
+              </FormControl>
+              <FormMessage>{errors[formField.name]?.message}</FormMessage>
+            </FormItem>}
+          />
 
-              <FormField control={control} name={"position_id"} render={({ field: formField }) => 
-                <FormItem>
-                  <FormLabel>Lavozimi</FormLabel>
-                  <FormControl>
-                    <Select onValueChange={value => setValue(formField.name, value)}>
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {options.positions.map((position) => ( <SelectItem key={position.id} value={String(position.id)}> {position.name} </SelectItem> ))}
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormMessage>{errors[formField.name]?.message}</FormMessage>
-                </FormItem>}
-              />
+          <FormField control={control} name={"region_id"} render={({ field: formField }) => 
+            <FormItem className="w-80">
+              <FormLabel>Shaxar/Tuman *</FormLabel>
+              <FormControl>
+                <Select required onValueChange={value => setValue(formField.name, value)}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {options.regions.map((rgn) => ( <SelectItem key={rgn.id} value={String(rgn.id)}> {rgn.name} </SelectItem> ))}
+                  </SelectContent>
+                </Select>
+              </FormControl>
+              <FormMessage>{errors[formField.name]?.message}</FormMessage>
+            </FormItem>}
+          />
 
-              <FormField control={control} name={"birthday"} render={({ field: formField }) => 
-                <FormItem>
-                  <FormLabel>Tug'ilgan sana</FormLabel>
-                  <FormControl>
-                    <Input type={"date"} value={formField.value} onChange={(e) => setValue(formField.name, e.target.value)} />
-                  </FormControl>
-                  <FormMessage>{errors[formField.name]?.message}</FormMessage>
-                </FormItem>}
-              />
+          <FormField control={control} name={"address"} render={({ field: formField }) => 
+            <FormItem className="w-80">
+              <FormLabel>Manzili *</FormLabel>
+              <FormControl>
+                <Input type={"text"} required value={formField.value ?? ""} onChange={(e) => setValue(formField.name, e.target.value)} />
+              </FormControl>
+              <FormMessage>{errors[formField.name]?.message}</FormMessage>
+            </FormItem>}
+          />
 
-              <FormField control={control} name={"passport_series"} render={({ field: formField }) => 
-                <FormItem>
-                  <FormLabel>Pasport raqami</FormLabel>
-                  <FormControl>
-                    <Input value={formField.value ?? ""} onChange={(e) => setValue(formField.name, e.target.value.replace(/[^A-Za-z]/g, "").toUpperCase())} maxLength={2} minLength={2}/>
-                  </FormControl>
-                  <FormMessage>{errors[formField.name]?.message}</FormMessage>
-                </FormItem>}
-              />
+          <FormField control={control} name={"status"} render={({ field: formField }) => 
+            <FormItem className="w-80">
+              <FormLabel>Xodim statusi *</FormLabel>
+              <FormControl>
+                <Select disabled onValueChange={value => setValue(formField.name, value)}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {options.worker_status.map((wrk_sts) => ( <SelectItem key={wrk_sts.id} value={String(wrk_sts.id)}> {wrk_sts.name} </SelectItem> ))}
+                  </SelectContent>
+                </Select>
+              </FormControl>
+              <FormMessage>{errors[formField.name]?.message}</FormMessage>
+            </FormItem>}
+          />
 
+          <FormField control={control} name={"position_id"} render={({ field: formField }) => 
+            <FormItem className="w-80">
+              <FormLabel>Lavozimi *</FormLabel>
+              <FormControl>
+                <Select required onValueChange={value => setValue(formField.name, value)}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {options.positions.map((pstn) => ( <SelectItem key={pstn.id} value={String(pstn.id)}> {pstn.name} </SelectItem> ))}
+                  </SelectContent>
+                </Select>
+              </FormControl>
+              <FormMessage>{errors[formField.name]?.message}</FormMessage>
+            </FormItem>}
+          />
 
-            <Button type="submit" className="w-full">
-              Saqlash
-            </Button>
-          </form>
-        </Form>
+          <FormField control={control} name="phone_youre" render={({ field: { onChange, value, ...rest } }) => (
+            <FormItem className="w-40">
+              <FormLabel>Telefon 1 *</FormLabel>
+              <FormControl>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">+998</span>
+                  <Input
+                    type="tel"
+                    className="pl-16"
+                    required
+                    {...rest}
+                    value={formatPhoneNumber(value)}
+                    onChange={(e) => {
+                      const rawValue = e.target.value.replace(/\D/g, "").slice(0, 10); // Faqat 9 ta raqam
+                      onChange(rawValue);
+                    }}
+                    placeholder="## ### ####"
+                  />
+                </div>
+              </FormControl>
+              <FormMessage>{errors.phone_youre?.message}</FormMessage>
+            </FormItem>)}
+          />
+
+          <FormField control={control} name="phone_additional" render={({ field: { onChange, value, ...rest } }) => (
+            <FormItem className="w-40">
+              <FormLabel>Telefon 2 </FormLabel>
+              <FormControl>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">+998</span>
+                  <Input
+                    type="tel"
+                    className="pl-16"
+                    {...rest}
+                    value={formatPhoneNumber(value ?? "")}
+                    onChange={(e) => {
+                      const rawValue = e.target.value.replace(/\D/g, "").slice(0, 10); // Faqat 9 ta raqam
+                      onChange(rawValue);
+                    }}
+                    placeholder="## ### ####"
+                  />
+                </div>
+              </FormControl>
+              <FormMessage>{errors.phone_additional?.message}</FormMessage>
+            </FormItem>)}
+          />
+
+          <FormField control={control} name="phone_work" render={({ field: { onChange, value, ...rest } }) => (
+            <FormItem className="w-40">
+              <FormLabel>Ish telefoni </FormLabel>
+              <FormControl>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">+998</span>
+                  <Input
+                    type="tel"
+                    className="pl-16"
+                    {...rest}
+                    value={formatPhoneNumber(value ?? "")}
+                    onChange={(e) => {
+                      const rawValue = e.target.value.replace(/\D/g, "").slice(0, 10); // Faqat 9 ta raqam
+                      onChange(rawValue);
+                    }}
+                    placeholder="## ### ####"
+                  />
+                </div>
+              </FormControl>
+              <FormMessage>{errors.phone_work?.message}</FormMessage>
+            </FormItem>)}
+          />
+
+          <FormField control={control} name={"education"} render={({ field: formField }) => 
+            <FormItem className="w-80">
+              <FormLabel>Ma'lumoti</FormLabel>
+              <FormControl>
+                <Select required onValueChange={value => setValue(formField.name, value)}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {options.education_status.map((edc_sts) => ( <SelectItem key={edc_sts.id} value={String(edc_sts.id)}> {edc_sts.name} </SelectItem> ))}
+                  </SelectContent>
+                </Select>
+              </FormControl>
+              <FormMessage>{errors[formField.name]?.message}</FormMessage>
+            </FormItem>}
+          />
+          
+          <FormField control={control} name={"education_place"} render={({ field: formField }) => 
+            <FormItem className="w-80">
+              <FormLabel>Tamomlagan ta'lim muassasasi nomi</FormLabel>
+              <FormControl>
+                <Input type={"text"} value={formField.value ?? ""} onChange={(e) => setValue(formField.name, e.target.value)} />
+              </FormControl>
+              <FormMessage>{errors[formField.name]?.message}</FormMessage>
+            </FormItem>}
+          />
+
+          <FormField control={control} name={"responsible_worker"} render={({ field: formField }) => 
+            <FormItem className="w-80">
+              <FormLabel>Ma'sul xodim</FormLabel>
+              <FormControl>
+                <Input disabled type={"text"} value={formField.value ?? ""} defaultValue={"user.admin"}/>
+              </FormControl>
+            </FormItem>}
+          />
+
+          <FormField control={control} name="photo" render={({ field }) => (
+            <FormItem className="w-80 h-80">
+              <FormLabel htmlFor="photo" >Rasm yuklash</FormLabel>
+              <FormControl>
+                {imageUrl ? (
+                  <div className="mt-4 relative">
+                    <PhotoProvider>
+                      <PhotoView src={`https://garant-hr.uz/api/public/storage/${imageUrl}`}>
+                        <img src={`https://garant-hr.uz/api/public/storage/${imageUrl}`} alt="Xodim rasmi" className="w-full h-72 object-cover rounded-md"/>
+                      </PhotoView>
+                    </PhotoProvider>
+                    <Button variant="destructive" className="mt-2 absolute bottom-1 right-1" onClick={handleImageDelete} disabled={loading}>
+                      O'chirish
+                    </Button>
+                  </div>
+                ) : (
+                  <Input id="photo" type="file" className="h-72" accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        field.onChange(file); // `react-hook-form` bilan ishlashi uchun
+                        handleImageUpload(e);
+                      }
+                    }}
+                  />
+                )}
+              </FormControl>
+              <FormMessage />
+            </FormItem>)}
+          />
+
+          <Button type="submit" className="w-full">
+            Saqlash
+          </Button>
+        </form>
+      </Form>
       </Card>
     </div>
   );

@@ -12,3 +12,18 @@ export const MONTHS = [
     { value: "11", label: "Noyabr" },
     { value: "12", label: "Dekabr" },
   ]
+
+ export const worker_status = [ 
+    {id:"1", name:"Ish aoliyatida"}, 
+    {id:"2", name:"Ta'tilda"}, 
+    {id:"3", name:"Mehnat safari"}, 
+    {id:"4", name:"Ishdan bo'shatilingan"}, 
+  ]
+  
+export const education_status = [ 
+  { id:"maktab", name:"Maktab" }, 
+  { id:"kollej", name:"Kollej" },
+  { id:"texnikum", name:"Texnikum" },
+  { id:"bakalavr", name:"Bakalavr" }, 
+  { id:"magistr", name:"Magistr" }
+]

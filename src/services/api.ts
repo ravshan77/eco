@@ -1,9 +1,9 @@
 import axios from 'axios';
 import { User, Task, TWorkers } from '../types/types';
 import { toast } from '../components/ui/use-toast';
-
+// https://garant-hr.uz/api/anketa-web-app/store/image
 const api = axios.create({
-  baseURL: 'http://localhost:3000/api',
+  baseURL: 'https://garant-hr.uz/api',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -39,12 +39,21 @@ api.interceptors.response.use(
 );
 
 // Universal API functions
-export const apiRequest = async <T>(method: string, url: string, data?: any): Promise<T> => {
+export const apiRequest = async <T>(method: string, url: string, data?: any, headers = {}) => {
+  // console.log(data instanceof FormData ? "forumdata" : "jsondata")
   try {
-    const response = await api.request<T>({ method, url, data });
+    const response = await api.request<T>({
+      method,
+      url,
+      data,
+      headers: {
+        ...(data instanceof FormData ? {"Content-Type": "multipart/form-data"} : { "Content-Type": "application/json" }), // FormData bo‘lsa, Content-Type set qilinmaydi
+        ...headers,
+      },
+    });
     return response.data;
   } catch (error) {
-    console.error('API Error:', error);
+    console.error("API Error:", error);
     throw error;
   }
 };

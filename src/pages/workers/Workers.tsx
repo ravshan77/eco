@@ -1,17 +1,14 @@
 import { TWorkers } from '../../types/types';
 import { MONTHS } from '@/constants';
-// import { tasksAPI } from '../../services/api';
 import { Card } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
 import { Button } from '../../components/ui/button';
-// import { toast } from '../../components/ui/use-toast';
 import { useState, useEffect, ChangeEvent } from 'react';
 import { LoadingSpinner } from '../../components/ui/loading-spinner';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { LoadingOverlay } from '@/components/ui/loading-overlay';
 import { ChevronLeft, Plus } from 'lucide-react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import AddWorkerModal from './components/AddWorkerModal';
 
 const _tasks: TWorkers[] =  [ 
     { 
@@ -22,7 +19,7 @@ const _tasks: TWorkers[] =  [
       position_id: "1",
       position_name: "Dasturchi",
       birthday: "03.04.2020",
-      phone_number: "+998991940851",
+      phone_youre: "+998991940851",
       phone_additional: null,
       phone_work: null,
       address: null,
@@ -30,7 +27,6 @@ const _tasks: TWorkers[] =  [
       education_place: null,
       photo: null,
       passport_number: null,
-      passport_: null,
       state_id: null,
       state_name: null,
       region_id: null,
@@ -48,7 +44,7 @@ const _tasks: TWorkers[] =  [
       position_id: "1",
       position_name: "Dasturchi",
       birthday: "03.04.2020",
-      phone_number: "+998991940851",
+      phone_youre: "+998991940851",
       phone_additional: null,
       phone_work: null,
       address: null,
@@ -56,7 +52,6 @@ const _tasks: TWorkers[] =  [
       education_place: null,
       photo: null,
       passport_number: null,
-      passport_: null,
       state_id: null,
       state_name: null,
       region_id: null,
@@ -74,7 +69,7 @@ const _tasks: TWorkers[] =  [
       position_id: "1",
       position_name: "Dasturchi",
       birthday: "03.04.2020",
-      phone_number: "+998991940851",
+      phone_youre: "+998991940851",
       phone_additional: null,
       phone_work: null,
       address: null,
@@ -82,7 +77,6 @@ const _tasks: TWorkers[] =  [
       education_place: null,
       photo: null,
       passport_number: null,
-      passport_: null,
       state_id: null,
       state_name: null,
       region_id: null,
@@ -100,7 +94,7 @@ const _tasks: TWorkers[] =  [
       position_id: "1",
       position_name: "Dasturchi",
       birthday: "03.04.2020",
-      phone_number: "+998991940851",
+      phone_youre: "+998991940851",
       phone_additional: null,
       phone_work: null,
       address: null,
@@ -108,7 +102,6 @@ const _tasks: TWorkers[] =  [
       education_place: null,
       photo: null,
       passport_number: null,
-      passport_: null,
       state_id: null,
       state_name: null,
       region_id: null,
@@ -126,7 +119,7 @@ const _tasks: TWorkers[] =  [
       position_id: "1",
       position_name: "Dasturchi",
       birthday: "03.04.2020",
-      phone_number: "+998991940851",
+      phone_youre: "+998991940851",
       phone_additional: null,
       phone_work: null,
       address: null,
@@ -134,7 +127,6 @@ const _tasks: TWorkers[] =  [
       education_place: null,
       photo: null,
       passport_number: null,
-      passport_: null,
       state_id: null,
       state_name: null,
       region_id: null,
@@ -152,7 +144,7 @@ const _tasks: TWorkers[] =  [
       position_id: "1",
       position_name: "Dasturchi",
       birthday: "03.04.2020",
-      phone_number: "+998991940851",
+      phone_youre: "+998991940851",
       phone_additional: null,
       phone_work: null,
       address: null,
@@ -160,7 +152,6 @@ const _tasks: TWorkers[] =  [
       education_place: null,
       photo: null,
       passport_number: null,
-      passport_: null,
       state_id: null,
       state_name: null,
       region_id: null,
@@ -176,8 +167,6 @@ export default function Workers() {
 
   const [data, setData] = useState(_tasks);
   const [isLoading, setIsLoading] = useState(false);
-  const [isActionLoading, setIsActionLoading] = useState(false);
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState(''); 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 20;
@@ -216,23 +205,7 @@ export default function Workers() {
     setCurrentPage(1);
   };
 
-
-  const handleToggleAddModal = () => setIsAddModalOpen(prev => !prev)
   const handleGoBack = () => navigate(-1)
-  const handleAddTask = async (data: Omit<TWorkers, 'id' | 'date'>) => {
-    // try {
-    //   setIsActionLoading(true);
-    //   await tasksAPI.create({ ...data });
-    //   await fetchTasks();
-    //   setIsAddModalOpen(false);
-    //   toast({ title: "Muvaffaqiyatli qo'shildi", description: "Yangi topshiriq qo'shildi" });
-    // } catch (err) {
-    //   toast({ variant: "destructive", title: "Xatolik yuz berdi", description: "Topshiriq qo'shishda xatolik yuz berdi" });
-    //   console.error('Error creating task:', err);
-    // } finally {
-    //   setIsActionLoading(false);
-    // }
-  };
 
   if (isLoading) {
     return (
@@ -245,13 +218,12 @@ export default function Workers() {
 
   return (
     <>
-      {isActionLoading && <LoadingOverlay />}
-      <AddWorkerModal open={isAddModalOpen} onOpenChange={setIsAddModalOpen} onSubmit={handleAddTask} />
+      {isLoading && <LoadingOverlay />}
       <div className="space-y-4 min-w-[360px]">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <Button onClick={handleGoBack} className="w-full sm:w-auto"> <ChevronLeft className="mr-2 h-4 w-4" /> Ortga </Button>
           <h2 className="text-2xl font-bold"> Xodimlar ro'yxati </h2>
-          <Button asChild onClick={handleToggleAddModal} className="w-full sm:w-auto"> 
+          <Button asChild className="w-full sm:w-auto"> 
             <NavLink to="/workers/add-new-worker">
               <Plus className="mr-2 h-4 w-4" /> 
               Xodim qo'shish
@@ -308,7 +280,7 @@ export default function Workers() {
                     <td className="p-2 border border-gray-300"> {wkr.birthday} </td>
                     <td className="p-2 border border-gray-300"> {wkr.address} </td>
                     <td className="p-2 border border-gray-300"> {wkr.date}  </td>
-                    <td className="p-2 border border-gray-300"> { wkr.phone_number } </td>
+                    <td className="p-2 border border-gray-300"> { wkr.phone_youre } </td>
                     <td className="p-2 border border-gray-300"> {wkr.position_name} </td>
                   </tr>
                 ))}
