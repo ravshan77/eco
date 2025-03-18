@@ -29,7 +29,7 @@ const Tasks = () => {
   const [isActionLoading, setIsActionLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const ITEMS_PER_PAGE = 10;
 
   const fetchTasks = async () => {
     try {
@@ -81,9 +81,9 @@ const Tasks = () => {
     task.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const totalPages = Math.ceil(filteredTasks.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
+  const totalPages = Math.ceil(filteredTasks.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
   const currentTasks = filteredTasks.slice(startIndex, endIndex);
 
   const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {

@@ -9,7 +9,7 @@ import { useState, useEffect, ChangeEvent } from 'react';
 import { LoadingSpinner } from '../../components/ui/loading-spinner';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
-const _tasks: Task[] =  [ 
+const _facke_workers: Task[] =  [ 
     { assignedTo: '67345673456734567345673456734567', createdAt: '11.03.2025 - 20.06.2025', deadline: '2025-03-11', description: "Reyd chorshanba kuni o'tqazish", id: '1', priority: 'low', status: 'completed', title: 'Birnarsa qilib bajardi' }, 
     { assignedTo: '67345673456734567345673456734568', createdAt: '23.03.2025 - 14.04.2025', deadline: '2025-04-07 ', description: 'Xududlar mojorosini taxlil qilish', id: '2', priority: 'high', status: 'pending', title: '' }, 
     { assignedTo: '67345673456734567345673456734569', createdAt: '03.03.2025 - 02.09.2025', deadline: '2025-09-07 ', description: "Targ'ibot ishlari", id: '3', priority: 'medium', status: 'in_progress', title: '' }, 
@@ -17,15 +17,15 @@ const _tasks: Task[] =  [
 
 const TaskTab1 = () => {
   
-    const [tasks, setTasks] = useState(_tasks);
+    const [tasks, setTasks] = useState(_facke_workers);
     const [isLoading, setIsLoading] = useState(false);
     const [isActionLoading, setIsActionLoading] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 5;
+    const ITEMS_PER_PAGE = 5;
   
     const currentYear = new Date().getFullYear()
-    const years = Array.from({ length: 10 }, (_, i) => currentYear - i)
+    const YEARS = Array.from({ length: 10 }, (_, i) => currentYear - i)
   
     const fetchTasks = async () => {
       try {
@@ -62,9 +62,9 @@ const TaskTab1 = () => {
   
     const filteredTasks = tasks.filter((task) => task.title.toLowerCase().includes(searchQuery.toLowerCase()) );
   
-    const totalPages = Math.ceil(filteredTasks.length / itemsPerPage);
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
+    const totalPages = Math.ceil(filteredTasks.length / ITEMS_PER_PAGE);
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const endIndex = startIndex + ITEMS_PER_PAGE;
     const currentTasks = filteredTasks.slice(startIndex, endIndex);
   
     const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
@@ -153,7 +153,7 @@ const TaskTab1 = () => {
             <SelectValue placeholder="Yil" />
           </SelectTrigger>
           <SelectContent>
-            {years.map((year) => ( <SelectItem key={year} value={year.toString()}> {year} </SelectItem> ))}
+            {YEARS.map((year) => ( <SelectItem key={year} value={year.toString()}> {year} </SelectItem> ))}
           </SelectContent>
         </Select>
       </div>

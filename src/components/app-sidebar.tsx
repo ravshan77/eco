@@ -26,6 +26,29 @@ const items: MenuItem[] = [
     icon: Home,
   },
   {
+    title: "Ma'lumotlar",
+    icon: Inbox,
+    submenuKey: "information",
+    submenu: [
+      {
+        title: "Bo'limlar",
+        url: "/informations/sections",
+      },
+      // {
+      //   title: "Yangi topshiriqlar",
+      //   url: "/tasks  ",
+      // },
+      // {
+      //   title: "Bajarilayotgan",
+      //   url: "/tasks/in-progress",
+      // },
+      // {
+      //   title: "Bajarilgan",
+      //   url: "/tasks/completed",
+      // },
+    ],
+  },
+  {
     title: "Topshiriqlar",
     icon: Inbox,
     submenuKey: "tasks",

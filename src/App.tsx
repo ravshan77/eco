@@ -19,6 +19,8 @@ import './styles/globals.css';
 import NotFound from './pages/NotFound';
 import TasksToEmployee from './pages/tasks/TasksToEmployee';
 import AddWorkerPage from './pages/workers/AddWorkerPage';
+import EditWorkerPage from './pages/workers/EditWorkerPage';
+import Sections from './pages/sections/Sections';
 
 function App() {
   return (
@@ -31,8 +33,10 @@ function App() {
             <Route path="/" element={ true ? ( <MainLayout /> ) : ( <Navigate to="/login" replace /> )}>
               <Route index element={<Dashboard />} />
               <Route path="workers" element={<Workers />} />
+              <Route path="informations/sections" element={<Sections />} />
               <Route path="workers/new" element={<NewEmployee />} />
               <Route path="workers/add-new-worker" element={<AddWorkerPage />} />
+              <Route path="workers/edit-worker/:id" element={<EditWorkerPage />} />
               <Route path="workers/active" element={<ActiveEmployees />} />
               <Route path="workers/archived" element={<ArchivedEmployees />} />
               <Route path="tasks" element={<Tasks />} />
@@ -41,7 +45,7 @@ function App() {
               <Route path="tasks/in-progress" element={<InProgressTasks />} />
               <Route path="search" element={<Search />} />
               <Route path="settings" element={<Settings />} />
-              <Route path="/tasks-to-employee/:name/:id" element={<TasksToEmployee />} />
+              <Route path="tasks-to-employee/:name/:id" element={<TasksToEmployee />} />
             </Route>
           </Routes>
         </Router>

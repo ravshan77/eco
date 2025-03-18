@@ -1,204 +1,53 @@
-import { TWorkers } from '../../types/types';
-import { MONTHS } from '@/constants';
 import { Card } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
+import { toast } from '@/components/ui/use-toast';
 import { Button } from '../../components/ui/button';
-import { useState, useEffect, ChangeEvent } from 'react';
-import { LoadingSpinner } from '../../components/ui/loading-spinner';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { LoadingOverlay } from '@/components/ui/loading-overlay';
-import { ChevronLeft, Plus } from 'lucide-react';
+import { workersAPI } from '@/services/workers.service';
 import { NavLink, useNavigate } from 'react-router-dom';
+import { useState, useEffect, ChangeEvent } from 'react';
+import { TWorkers, WorkerStatusEnum } from '@/types/types';
+import { PhotoProvider, PhotoView } from 'react-photo-view';
+import { LoadingOverlay } from '@/components/ui/loading-overlay';
+import { ChevronLeft, PenLine, Plus, Settings } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { _facke_workers, ITEMS_PER_PAGE, MONTHS, StatusInfo, WORKER_STATUS_INFO, YEARS } from '@/constants';
 
-const _tasks: TWorkers[] =  [ 
-    { 
-      id: 1,
-      name: "Avazbek",
-      section_id: null,
-      section_name: null,
-      position_id: "1",
-      position_name: "Dasturchi",
-      birthday: "03.04.2020",
-      phone_youre: "+998991940851",
-      phone_additional: null,
-      phone_work: null,
-      address: null,
-      education: null,
-      education_place: null,
-      photo: null,
-      passport_number: null,
-      state_id: null,
-      state_name: null,
-      region_id: null,
-      region_name: null,
-      responsible_worker: "Supper admin",
-      status: "is_active",
-      date: "10.03.2025 11:36",
-      passport_series: "AB" 
-    }, 
-    { 
-      id: 1,
-      name: "Avazbek",
-      section_id: null,
-      section_name: null,
-      position_id: "1",
-      position_name: "Dasturchi",
-      birthday: "03.04.2020",
-      phone_youre: "+998991940851",
-      phone_additional: null,
-      phone_work: null,
-      address: null,
-      education: null,
-      education_place: null,
-      photo: null,
-      passport_number: null,
-      state_id: null,
-      state_name: null,
-      region_id: null,
-      region_name: null,
-      responsible_worker: "Supper admin",
-      status: "is_active",
-      date: "10.03.2025 11:36" ,
-      passport_series: "AB"
-    }, 
-    { 
-      id: 1,
-      name: "Avazbek",
-      section_id: null,
-      section_name: null,
-      position_id: "1",
-      position_name: "Dasturchi",
-      birthday: "03.04.2020",
-      phone_youre: "+998991940851",
-      phone_additional: null,
-      phone_work: null,
-      address: null,
-      education: null,
-      education_place: null,
-      photo: null,
-      passport_number: null,
-      state_id: null,
-      state_name: null,
-      region_id: null,
-      region_name: null,
-      responsible_worker: "Supper admin",
-      status: "is_active",
-      date: "10.03.2025 11:36" ,
-      passport_series: "AB"
-    }, 
-    { 
-      id: 1,
-      name: "Avazbek",
-      section_id: null,
-      section_name: null,
-      position_id: "1",
-      position_name: "Dasturchi",
-      birthday: "03.04.2020",
-      phone_youre: "+998991940851",
-      phone_additional: null,
-      phone_work: null,
-      address: null,
-      education: null,
-      education_place: null,
-      photo: null,
-      passport_number: null,
-      state_id: null,
-      state_name: null,
-      region_id: null,
-      region_name: null,
-      responsible_worker: "Supper admin",
-      status: "is_active",
-      date: "10.03.2025 11:36" ,
-      passport_series: "AB"
-    }, 
-    { 
-      id: 1,
-      name: "Avazbek",
-      section_id: null,
-      section_name: null,
-      position_id: "1",
-      position_name: "Dasturchi",
-      birthday: "03.04.2020",
-      phone_youre: "+998991940851",
-      phone_additional: null,
-      phone_work: null,
-      address: null,
-      education: null,
-      education_place: null,
-      photo: null,
-      passport_number: null,
-      state_id: null,
-      state_name: null,
-      region_id: null,
-      region_name: null,
-      responsible_worker: "Supper admin",
-      status: "is_active",
-      date: "10.03.2025 11:36" ,
-      passport_series: "AB"
-    }, 
-    { 
-      id: 1,
-      name: "Avazbek",
-      section_id: null,
-      section_name: null,
-      position_id: "1",
-      position_name: "Dasturchi",
-      birthday: "03.04.2020",
-      phone_youre: "+998991940851",
-      phone_additional: null,
-      phone_work: null,
-      address: null,
-      education: null,
-      education_place: null,
-      photo: null,
-      passport_number: null,
-      state_id: null,
-      state_name: null,
-      region_id: null,
-      region_name: null,
-      responsible_worker: "Supper admin",
-      status: "is_active",
-      date: "10.03.2025 11:36" ,
-      passport_series: "AB"
-    }, 
-  ]
 export default function Workers() {
+  // STETS
+  const [data, setData] = useState(_facke_workers);
+  const [isLoading, setIsLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState(''); 
+  
+  // VARABELS
+  const filteredWorkers = data.filter((wkr) => wkr.name.toLowerCase().includes(searchQuery.toLowerCase()));
+  const totalPages = Math.ceil(filteredWorkers.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const currentData = filteredWorkers.slice(startIndex, endIndex);
+  
+  // HOOKS
   const navigate = useNavigate();
 
-  const [data, setData] = useState(_tasks);
-  const [isLoading, setIsLoading] = useState(false);
-  const [searchQuery, setSearchQuery] = useState(''); 
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 20;
-
-  const currentYear = new Date().getFullYear()
-  const years = Array.from({ length: 10 }, (_, i) => currentYear - i)
-
-  // const fetchTasks = async () => {
-  //   try {
-  //     setIsLoading(true);
-  //     // const data = await tasksAPI.getAll();
-  //     // setTasks(data);
-  //     toast({ title: "Muvaffaqiyatli yuklandi", description: "Topshiriqlar ro'yxati yangilandi" });
-  //   } catch (err) {
-  //     toast({ variant: "destructive", title: "Xatolik yuz berdi", description: "Topshiriqlarni yuklashda xatolik yuz berdi" });
-  //     console.error('Error fetching tasks:', err);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
-
+  // EFFECTS
   useEffect(() => {
-    // fetchTasks();
+    // fetchWorkers();
   }, []);
 
 
-  const filteredTasks = data.filter((wkr) => wkr.name.toLowerCase().includes(searchQuery.toLowerCase()) );
-
-  const totalPages = Math.ceil(filteredTasks.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentData = filteredTasks.slice(startIndex, endIndex);
+  const fetchWorkers = async () => {
+    try {
+      setIsLoading(true);
+      const data = await workersAPI.getAll();
+      setData(data);
+      toast({ title: "Muvaffaqiyatli yuklandi", description: "Topshiriqlar ro'yxati yangilandi" });
+    } catch (err) {
+      toast({ variant: "destructive", title: "Xatolik yuz berdi", description: "Topshiriqlarni yuklashda xatolik yuz berdi" });
+      console.error('Error fetching tasks:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
@@ -206,13 +55,20 @@ export default function Workers() {
   };
 
   const handleGoBack = () => navigate(-1)
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <LoadingSpinner size="lg" />
-      </div>
-    );
+  const handleGoEdit = (id:string) => navigate(`/workers/edit-worker/${id}`)
+  const getWorkerStatus = (status: TWorkers["status"]): StatusInfo => {
+    switch (status) {
+      case WorkerStatusEnum.ish_faoliyatida:
+        return WORKER_STATUS_INFO.ish_faoliyatida
+      case WorkerStatusEnum.tatil:
+        return WORKER_STATUS_INFO.tatilda
+      case WorkerStatusEnum.komandirovfka:
+        return WORKER_STATUS_INFO.mehnat_safari
+      case WorkerStatusEnum.ishdan_boshatilingan:
+        return WORKER_STATUS_INFO.ishdan_bushagan  
+      default:
+        return { color:"", text:"" }
+    }
   }
 
 
@@ -250,38 +106,54 @@ export default function Workers() {
                   <SelectValue placeholder="Yil" />
                 </SelectTrigger>
                 <SelectContent>
-                  {years.map((year) => ( <SelectItem key={year} value={year.toString()}> {year} </SelectItem> ))}
+                  {YEARS.map((year) => ( <SelectItem key={year} value={year.toString()}> {year} </SelectItem> ))}
                 </SelectContent>
               </Select>
             </div>
           </div>
 
-          <div className="rounded-md border overflow-auto max-h-[60vh]">
+          <div className="rounded-md border overflow-auto max-h-[64vh]">
             <table className="w-full min-w-[640px] border-separate border-spacing-0">
               {/* TEPADAGI HEADER QISMI */}
               <thead className="bg-white dark:bg-black sticky top-0 z-20 shadow-md border-b-2 border-gray-400">
-                <tr className="border-b border-gray-300">
-                  <th className="p-2 text-left w-[120px] border border-gray-300">Tug'ilgan sana</th>
-                  <th className="p-2 text-left w-[250px] border border-gray-300">Topshiriqlar</th>
-                  <th className="p-2 text-left w-[150px] border border-gray-300">Berilgan muddatda</th>
-                  <th className="p-2 text-left w-[150px] border border-gray-300">Muddat nazorati</th>
-                  <th className="p-2 text-left w-[120px] border border-gray-300">Prioritet</th>
-                  <th className="p-2 text-left w-[80px] border border-gray-300">Ball</th>
-                  <th className="p-2 text-left w-[150px] border border-gray-300">Tasdiqlash</th>
+                <tr className="border-b h-12 border-gray-300">
+                  <th className="p-2 text-left w-8 border border-gray-300">№</th>
+                  <th className="p-2 text-left w-8 border border-gray-300">Rasmi</th>
+                  <th className="p-2 text-left border border-gray-300">F.I.O</th>
+                  <th className="p-2 text-left border border-gray-300">Lavozim</th>
+                  <th className="p-2 text-left w-36 border border-gray-300">Status</th>
+                  <th className="p-2 text-left w-32 border border-gray-300">Tel 1</th>
+                  <th className="p-2 text-left w-32 border border-gray-300">Ish telefoni</th>
+                  <th className="p-2 text-center w-8 border border-gray-300"> <div className='flex justify-center'><Settings /></div></th>
                 </tr>
               </thead>
 
               {/* BODY QISMI */}
               <tbody className="cursor-pointer">
-                {currentData.map((wkr) => (
+                {currentData.map((wkr, ind) => (
                   <tr key={wkr.id} className="border-b border-gray-300">
+                    <td className="p-2 border border-gray-300"> {ind + 1} </td>
+                    <td className="p-2 border border-gray-300"> 
+                      <PhotoProvider>
+                        <PhotoView src={wkr.photo ?? ""}>
+                          <img src={wkr.photo ?? ""} className='w-16 h-10 border' />
+                        </PhotoView>
+                      </PhotoProvider> 
+                    </td>
                     <td className="p-2 border border-gray-300"> {wkr.name} </td>
-                    <td className="p-2 border border-gray-300"> {wkr.id} </td>
-                    <td className="p-2 border border-gray-300"> {wkr.birthday} </td>
-                    <td className="p-2 border border-gray-300"> {wkr.address} </td>
-                    <td className="p-2 border border-gray-300"> {wkr.date}  </td>
-                    <td className="p-2 border border-gray-300"> { wkr.phone_youre } </td>
                     <td className="p-2 border border-gray-300"> {wkr.position_name} </td>
+                    <td className="p-2 border border-gray-300"> 
+                      <div className={`flex items-center justify-start ${getWorkerStatus(wkr.status).color}`}> 
+                        <h3 className='h-full w-full'>{getWorkerStatus(wkr.status).text}</h3> 
+                      </div> 
+                    </td>
+                    <td className="p-2 border border-gray-300"> { wkr.phone_youre } </td>
+                    <td className="p-2 border border-gray-300"> {wkr.phone_youre} </td>
+                    <td className="p-2 border border-gray-300"> 
+                      <div className='flex justify-center'>
+                        <Button type='button' onClick={() => handleGoEdit(String(wkr.id))} className='w-12 h-full'> <PenLine  /> </Button>
+                      </div> 
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -290,7 +162,7 @@ export default function Workers() {
 
           <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="text-sm text-muted-foreground order-2 sm:order-1">
-              Jami {filteredTasks.length} topshiriq
+              Jami {filteredWorkers.length} xodim
             </div>
             <div className="flex items-center space-x-2 order-1 sm:order-2">
               <Button variant="outline" size="sm" onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))} disabled={currentPage === 1}> Oldingi </Button>

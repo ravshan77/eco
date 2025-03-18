@@ -1,9 +1,10 @@
 import axios from 'axios';
-import { User, Task, TWorkers } from '../types/types';
 import { toast } from '../components/ui/use-toast';
+import { User, Task, TWorkers } from '../types/types';
+
 // https://garant-hr.uz/api/anketa-web-app/store/image
 const api = axios.create({
-  baseURL: 'https://garant-hr.uz/api',
+  baseURL: 'https://ecouzkpi-main-9umb8r.laravel.cloud/api',
   headers: {
     'Content-Type': 'application/json',
   },

@@ -9,15 +9,16 @@ import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { fetchRequest } from "@/services/fetchRequest";
-import { SingleOption, TWorkers } from "@/types/types";
+import { areObjectsEqual } from "@/utils/objectsEqual";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 import { formatPhoneNumber } from "@/utils/formatPhoneNumber";
-import { education_status, worker_status } from "@/constants";
+import { SingleOption, TWorkers, WorkerStatus } from "@/types/types";
 import { deleteImage, uploadImage } from "@/services/worker_image.service";
+import { EDUCATION_STATUS, WORKER_STATUS, workerDefaultValues } from "@/constants";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-// ✅ Validatsiya uchun zod shemasi
+// Validatsiya uchun zod shemasi
 const workerSchema = z.object({
   state_id: z.string().optional(),
   region_id: z.string().optional(),
@@ -26,7 +27,6 @@ const workerSchema = z.object({
   address: z.string().min(3, "Manzil kamida 3 ta harf bo‘lishi kerak").optional(),
   phone_youre: z.string().min(9, "Telefon raqam noto‘g‘ri").max(13, "Telefon raqam noto‘g‘ri"),
   birthday: z.string().refine((val) => /^\d{4}-\d{2}-\d{2}$/.test(val), "Tug‘ilgan sanani YYYY-MM-DD formatida kiriting"),
-
   section_id: z.string().optional(),
   passport_series: z.string().optional(),
   phone_additional: z.string().optional(),
@@ -40,29 +40,21 @@ const workerSchema = z.object({
 });
 
 export default function AddWorkerPage() {
-  const navigate = useNavigate();
-  const handleGoBack = () => {
-    const confirmChange = window.confirm("Siz haqiqatdan ham ushbu sahifaga o'tmoqchimisiz?");
-    if (confirmChange) {
-      navigate(-1);
-    }
-
-    return
-  
-  };
-
-  const onSubmit = (data: any) => { console.log("Yangi xodim ma’lumotlari:", data) };
   const [loading, setLoading] = useState(true)
-  const [options, setOptions] = useState<{ states: SingleOption[], regions:SingleOption[], positions: SingleOption[], education_status: SingleOption[], worker_status: SingleOption[] }>({ states: [], regions: [], positions:[], worker_status, education_status })
+  const [options, setOptions] = useState<{ states: SingleOption[], regions:SingleOption[], positions: SingleOption[], EDUCATION_STATUS: SingleOption[], WORKER_STATUS: SingleOption[] }>({ states: [], regions: [], positions:[], WORKER_STATUS, EDUCATION_STATUS })
+
+  const navigate = useNavigate();
 
   const form = useForm<TWorkers>({
     resolver: zodResolver(workerSchema),
-    defaultValues: {  phone_youre: "", responsible_worker: "user.admin.name" },
+    defaultValues: workerDefaultValues,
     disabled: loading,
     shouldUnregister: false,
   });
 
   const { control, setValue, formState: { errors }, handleSubmit, getValues, watch,  } = form;
+  const imageUrl = watch("photo");
+  const state_id = options.states.length > 0 && getValues("state_id")
 
   // get states
   useEffect(() => {
@@ -87,7 +79,6 @@ export default function AddWorkerPage() {
     };
   }, []);
 
-  const state_id = options.states.length > 0 && getValues("state_id")
   // get regions
   useEffect(() => {
     if (!state_id) {
@@ -139,7 +130,7 @@ export default function AddWorkerPage() {
     };
   }, []);
 
-  const imageUrl = watch("photo");
+  const onSubmit = (data: any) => { console.log("Yangi xodim ma’lumotlari:", data) };
 
   // Rasm yuklash
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -172,6 +163,21 @@ export default function AddWorkerPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleGoBack = () => {
+    const chack_equla_values = areObjectsEqual(getValues(), workerDefaultValues);
+
+    if (chack_equla_values) {
+      navigate(-1);
+      return
+    }
+  
+    const confirmChange = window.confirm("Oxirgi kiritgan ma'lumotlaringiz saqlanmaydi?");
+    if (confirmChange) {
+      navigate(-1);
+    }
+    return
   };
 
 
@@ -282,12 +288,12 @@ export default function AddWorkerPage() {
             <FormItem className="w-80">
               <FormLabel>Xodim statusi *</FormLabel>
               <FormControl>
-                <Select disabled onValueChange={value => setValue(formField.name, value)}>
+                <Select disabled onValueChange={value => setValue(formField.name, value as WorkerStatus)}>
                   <SelectTrigger className="w-full">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {options.worker_status.map((wrk_sts) => ( <SelectItem key={wrk_sts.id} value={String(wrk_sts.id)}> {wrk_sts.name} </SelectItem> ))}
+                    {options.WORKER_STATUS.map((wrk_sts) => ( <SelectItem key={wrk_sts.id} value={String(wrk_sts.id)}> {wrk_sts.name} </SelectItem> ))}
                   </SelectContent>
                 </Select>
               </FormControl>
@@ -391,7 +397,7 @@ export default function AddWorkerPage() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {options.education_status.map((edc_sts) => ( <SelectItem key={edc_sts.id} value={String(edc_sts.id)}> {edc_sts.name} </SelectItem> ))}
+                    {options.EDUCATION_STATUS.map((edc_sts) => ( <SelectItem key={edc_sts.id} value={String(edc_sts.id)}> {edc_sts.name} </SelectItem> ))}
                   </SelectContent>
                 </Select>
               </FormControl>

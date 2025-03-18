@@ -25,7 +25,7 @@ const Employees = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const itemsPerPage = 5;
+  const ITEMS_PER_PAGE = 5;
 
   const fetchEmployees = async () => {
     try {
@@ -59,9 +59,9 @@ const Employees = () => {
     employee.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const totalPages = Math.ceil(filteredEmployees.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
+  const totalPages = Math.ceil(filteredEmployees.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
   const currentEmployees = filteredEmployees.slice(startIndex, endIndex);
 
   const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {

@@ -1,10 +1,19 @@
+export type WorkerStatus = "1" | "2" | "3" | "4" | null
+
+export enum WorkerStatusEnum {
+  ish_faoliyatida = "1",
+  tatil = "2",
+  komandirovfka = "3",
+  ishdan_boshatilingan = "4",
+}
+
 export interface TWorkers {
-  id: number;
+  id?: number | string | null;
   name: string;
   section_id?: string | null;
   section_name?: string | null;
   position_id: string;
-  position_name: string;
+  position_name?: string;
   passport_series: string;
   birthday: string;
   phone_youre: string;
@@ -20,9 +29,17 @@ export interface TWorkers {
   region_id?: string | null;
   region_name?: string | null;
   responsible_worker?: string | null;
-  status: string;
-  date: string
+  status: WorkerStatus;
+  date?: string
 }
+
+export interface TSections {
+    id?: number;
+    name: string,
+    responsible_worker?: string,
+    created_at?: string
+}
+
 
 export interface Task {
   id: string;
