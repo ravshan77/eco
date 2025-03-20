@@ -48,8 +48,8 @@ export default function EditWorkerPage() {
   const { id } = useParams();
 
   const form = useForm<TWorkers>({resolver: zodResolver(workerSchema), disabled: loading, shouldUnregister: false });
-  const { control, setValue, formState: { errors }, handleSubmit, getValues, watch, reset } = form;
-  const state_id = options.states.length > 0 && getValues("state_id");
+  const { control, setValue, formState: { errors }, handleSubmit, watch, reset } = form;
+  const state_id = options.states.length > 0 && watch("state_id");
   const imageUrl = watch("photo");
 
   // get worker data
@@ -63,11 +63,14 @@ export default function EditWorkerPage() {
     const fetchData = async () => {
       try {
         const response = await fetchRequest<{ data: SingleOption[] }>(`/anketa/states`);
-        if (isMounted && response)
+        if (isMounted && response){
           setOptions((prev) => ({ ...prev, states: response.data }));
-      } catch (error) {
-        alert(`Error fetching states (admin bilan bog'laning @paloncha): ${error}`);
-      } finally {
+        }else {
+          throw new Error(response.error.message)
+        }
+      } catch (err) {
+        toast({ variant: "destructive", title: "Xatolik yuz berdi", description: String(err) });
+      }finally {
         setLoading(false);
       }
     };
@@ -89,10 +92,13 @@ export default function EditWorkerPage() {
     const fetchData = async () => {
       try {
         const response = await fetchRequest<{ data: SingleOption[] }>(`/anketa/state-regions/${state_id}`);
-        if (isMounted && response)
+        if (isMounted && response){
           setOptions((prev) => ({ ...prev, regions: response.data }));
-      } catch (error) {
-        alert(`Error fetching regions (admin bilan bog'laning @paloncha): ${error}`);
+        }else {
+          throw new Error(response.error.message)
+        }
+      } catch (err) {
+        toast({ variant: "destructive", title: "Xatolik yuz berdi", description: String(err) });
       } finally {
         setLoading(false);
       }
@@ -112,11 +118,13 @@ export default function EditWorkerPage() {
       try {
         const response = await fetchRequest<{ data: SingleOption[] }>("/anketa/positons/for/telegram-bot");
         if (isMounted && response) {
-          const resp: SingleOption[] = response.data.map((postition) => ({id: postition.id, name: postition?.label as string }));
+          const resp: SingleOption[] = response.data.map((postition) => ({id: postition.id, name: postition?.name }));
           setOptions((prev) => ({ ...prev, positions: resp }));
+        }else {
+          throw new Error(response.error.message)
         }
-      } catch (error) {
-        alert(`Error fetching positions: ${error}`);
+      } catch (err) {
+        toast({ variant: "destructive", title: "Xatolik yuz berdi", description: String(err) });
       } finally {
         setLoading(false);
       }
@@ -147,7 +155,7 @@ export default function EditWorkerPage() {
   const onSubmit = (data: any) => console.log("o'zgartirilgan xodim ma’lumotlari:", data);
 
   const handleGoBack = () => {
-    const chack_equla_values = areObjectsEqual(getValues(), fristLoadValues);
+    const chack_equla_values = areObjectsEqual(watch(), fristLoadValues);
 
     if (chack_equla_values) {
       navigate(-1);

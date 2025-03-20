@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { base } from "@/services/api";
 import {  useForm } from "react-hook-form";
 import { ChevronLeft } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -8,67 +9,97 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { fetchRequest } from "@/services/fetchRequest";
+import { statesAPI } from "@/services/states.service";
 import { areObjectsEqual } from "@/utils/objectsEqual";
+import { SingleOption, TWorkers } from "@/types/types";
+import { regionsAPI } from "@/services/regions.service";
+import { workersAPI } from "@/services/workers.service";
+import { sectionsAPI } from "@/services/sections.service";
+import { positionsAPI } from "@/services/positions.service";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 import { formatPhoneNumber } from "@/utils/formatPhoneNumber";
-import { SingleOption, TWorkers, WorkerStatus } from "@/types/types";
-import { deleteImage, uploadImage } from "@/services/worker_image.service";
 import { EDUCATION_STATUS, WORKER_STATUS, workerDefaultValues } from "@/constants";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 // Validatsiya uchun zod shemasi
 const workerSchema = z.object({
-  state_id: z.string().optional(),
-  region_id: z.string().optional(),
-  position_id: z  .string(),
-  name: z.string().min(3, "Ism kamida 3 ta harf bo‘lishi kerak"),
-  address: z.string().min(3, "Manzil kamida 3 ta harf bo‘lishi kerak").optional(),
+  birthday: z.string(), //.refine((val) => /^\d{4}-\d{2}-\d{2}$/.test(val), "Tug‘ilgan sanani YYYY.MM.DD formatida kiriting"),
+  name: z.string().min(3, "F.I.O kamida 3 ta harf bo‘lishi kerak"),
   phone_youre: z.string().min(9, "Telefon raqam noto‘g‘ri").max(13, "Telefon raqam noto‘g‘ri"),
-  birthday: z.string().refine((val) => /^\d{4}-\d{2}-\d{2}$/.test(val), "Tug‘ilgan sanani YYYY-MM-DD formatida kiriting"),
-  section_id: z.string().optional(),
+  position_id: z.number().min(1, "Lavozim tanlang"),
+  section_id: z.number().min(1, "Bo'lim tanlash"),
+  address: z.string().min(3, "Manzil kamida 3 ta harf bo‘lishi kerak").optional(),
+  education: z.string().optional(),
+  education_place: z.string().optional(),
+  passport_number: z.string().optional(),
   passport_series: z.string().optional(),
   phone_additional: z.string().optional(),
   phone_work: z.string().optional(),
-  education: z.string().optional(),
-  education_place: z.string().optional(),
   photo: z.string().optional(),
-  passport_number: z.string().optional(),
-  responsible_worker: z.string().optional(),
-  status: z.string().optional(),     
+  region_id: z.number().optional(),
+  state_id: z.number().optional(),
 });
 
 export default function AddWorkerPage() {
   const [loading, setLoading] = useState(true)
-  const [options, setOptions] = useState<{ states: SingleOption[], regions:SingleOption[], positions: SingleOption[], EDUCATION_STATUS: SingleOption[], WORKER_STATUS: SingleOption[] }>({ states: [], regions: [], positions:[], WORKER_STATUS, EDUCATION_STATUS })
+  const [options, setOptions] = useState<{ states: SingleOption[], regions:SingleOption[], positions: SingleOption[], sections: SingleOption[], EDUCATION_STATUS: SingleOption[], WORKER_STATUS: SingleOption[] }>({ states: [], regions: [], positions:[], sections:[], WORKER_STATUS, EDUCATION_STATUS })
 
   const navigate = useNavigate();
 
   const form = useForm<TWorkers>({
     resolver: zodResolver(workerSchema),
-    defaultValues: workerDefaultValues,
+    // defaultValues: workerDefaultValues,
+    values: workerDefaultValues,
     disabled: loading,
     shouldUnregister: false,
   });
 
-  const { control, setValue, formState: { errors }, handleSubmit, getValues, watch,  } = form;
-  const imageUrl = watch("photo");
-  const state_id = options.states.length > 0 && getValues("state_id")
+  const { control, setValue, formState: { errors }, handleSubmit, watch } = form;
+  const image_path = watch("photo");
+  const state_id = watch("state_id")
+  const section_id = watch("section_id")
 
   // get states
   useEffect(() => {
     let isMounted = true;
+
     const fetchData = async () => {
       try {
-        const response = await fetchRequest<{ data: SingleOption[] }>(`/anketa/states`)
-        if (isMounted && response) {
-          setOptions(prev => ({ ...prev, states: response.data }));
+        const response = await statesAPI.getAll();
+        if (isMounted && response.status) {
+          const resp = response.resoult.map(pstn => ({ id: String(pstn.id), name: pstn?.name }))
+          setOptions(prev => ({ ...prev, states: resp }));
+        }else {
+          throw new Error(response.error.message)
         }
-      } catch (error) {
-        alert(`Error fetching states (admin bilan bog'laning @paloncha): ${error}`);
-      } finally{
-        setLoading(false)
+      } catch (err) {
+        toast({ variant: "destructive", title: "Xatolik yuz berdi", description: String(err) });
+      }
+    };
+
+    fetchData();
+
+    return () => {
+      isMounted = false; // Component unmounted bo'lsa, state update qilinmaydi
+    };
+  }, []);
+
+  // get sections
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchData = async () => {
+      try {
+        const response = await sectionsAPI.getAll();
+        if (isMounted && response.status) {
+          const resp = response.resoult.map(pstn => ({ id: String(pstn.id), name: pstn?.name }))
+          setOptions(prev => ({ ...prev, sections: resp }));
+        }else {
+          throw new Error(response.error.message)
+        }
+      } catch (err) {
+        toast({ variant: "destructive", title: "Xatolik yuz berdi", description: String(err) });
       }
     };
 
@@ -88,14 +119,14 @@ export default function AddWorkerPage() {
     let isMounted = true;
     const fetchData = async () => {
       try {
-        const response = await fetchRequest<{ data: SingleOption[] }>(`/anketa/state-regions/${state_id}`)
-        if (isMounted && response) {
-          setOptions(prev => ({ ...prev, regions: response.data }));
+        const response = await regionsAPI.getRegionsByStateId((state_id));
+        if (isMounted && response.status) {
+          setOptions(prev => ({ ...prev, regions: response.resoult }));
+        }else {
+          throw new Error(response.error.message)
         }
-      } catch (error) {
-        alert(`Error fetching regions (admin bilan bog'laning @paloncha): ${error}`);
-      } finally{
-        setLoading(false)
+      } catch (err) {
+        toast({ variant: "destructive", title: "Xatolik yuz berdi", description: String(err) });
       }
     };
 
@@ -108,16 +139,22 @@ export default function AddWorkerPage() {
 
   // get positions
   useEffect(() => {
+    if (!section_id) {
+      return;
+    }
+
     let isMounted = true;
     const fetchData = async () => {
       try {
-        const response = await fetchRequest<{ data: SingleOption[] }>("/anketa/positons/for/telegram-bot");
-        if (isMounted && response) {
-          const resp: SingleOption[] = response.data.map(postition => ({ id: postition.id, name: postition?.label as string }))
+        const response = await positionsAPI.getPositionBySectionId(section_id);
+        if (isMounted && response.status) {
+          const resp: SingleOption[] = response.resoult.map(postition => ({ id: String(postition.id), name: postition?.name }))
           setOptions(prev => ({ ...prev, positions: resp }));
+        }else {
+          throw new Error(response.error.message)
         }
-      } catch (error) {
-        alert(`Error fetching positions: ${error}`);
+      } catch (err) {
+        toast({ variant: "destructive", title: "Xatolik yuz berdi", description: String(err) });
       } finally {
         setLoading(false);
       }
@@ -128,45 +165,70 @@ export default function AddWorkerPage() {
     return () => {
       isMounted = false; // Component unmounted bo'lsa, state update qilinmaydi
     };
-  }, []);
+  }, [section_id]);
 
-  const onSubmit = (data: any) => { console.log("Yangi xodim ma’lumotlari:", data) };
+  const onSubmit = async (data: TWorkers) => { 
+    setLoading(true);
+    try {
+      const response = await workersAPI.create(data);
+      if (response.status) {
+        toast({ title: "Muvaffaqiyatli", description: "Yangi xodim qo'shildi"});
+        console.log(response.resoult)
+        // navigate(`/workers/edit-worker/${response.resoult.id}`)
+      }else {
+        throw new Error(response.error.message)
+      }
+    } catch (err) {
+      toast({ variant: "destructive", title: "Xatolik yuz berdi", description: String(err) });
+    } finally {
+      setLoading(false);
+    }
+   
+  };
 
   // Rasm yuklash
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
-
     setLoading(true);
+    const formData = new FormData();
+    formData.append("file", file);
+  
     try {
-      const response = await uploadImage(file);
-      setValue("photo", response); // Yuklangan rasm URL'sini saqlash
-      toast({ title: "Rasm yuklandi!", description: "Rasm muvaffaqiyatli yuklandi." });
-    } catch (error) {
-      toast({ variant: "destructive", title: "Xatolik", description: "Rasm yuklashda muammo yuz berdi." });
+      const response = await workersAPI.uploadImage(formData);
+      console.log(response)
+      if (response.status) {
+        setValue("photo", response.resoult.file_path); 
+        toast({ title: "Rasm yuklandi!", description: "Rasm muvaffaqiyatli yuklandi." });
+      }else {
+        throw new Error(response.error.message)
+      }
+    } catch (err) {
+      toast({ variant: "destructive", title: "Xatolik yuz berdi", description: String(err) });
     } finally {
       setLoading(false);
     }
   };
 
-  // Rasmni o‘chirish
-  const handleImageDelete = async () => {
-    if (!imageUrl) return;
+  //! Rasmni o‘chirish
+  const handleImageDelete = async (file_path:string) => {
+    if (!image_path) return;
 
-    setLoading(true);
-    try {
-      await deleteImage(imageUrl);
+    // setLoading(true);
+    // try {
+      // const response = await workersAPI.deleteImage(image_path);
       setValue("photo", ""); // Rasm URL'ni tozalash
-      toast({ title: "Rasm o‘chirildi!", description: "Rasm muvaffaqiyatli o‘chirildi." });
-    } catch (error) {
-      toast({ variant: "destructive", title: "Xatolik", description: "Rasmni o‘chirishda muammo yuz berdi." });
-    } finally {
-      setLoading(false);
-    }
+      // toast({ title: "Rasm o‘chirildi!", description: "Rasm muvaffaqiyatli o‘chirildi." });
+    // } catch (error) {
+      // toast({ variant: "destructive", title: "Xatolik", description: "Rasmni o‘chirishda muammo yuz berdi." });
+    // }
+    // finally {
+    //   setLoading(false);
+    // }
   };
 
   const handleGoBack = () => {
-    const chack_equla_values = areObjectsEqual(getValues(), workerDefaultValues);
+    const chack_equla_values = areObjectsEqual(watch(), workerDefaultValues);
 
     if (chack_equla_values) {
       navigate(-1);
@@ -180,6 +242,8 @@ export default function AddWorkerPage() {
     return
   };
 
+  console.log(errors)
+  // console.log(base + image_path)
 
   return (
     <div className="space-y-4 min-w-[360px]">
@@ -241,7 +305,7 @@ export default function AddWorkerPage() {
             <FormItem className="w-80">
               <FormLabel>Viloyat *</FormLabel>
               <FormControl>
-                <Select required onValueChange={value => {
+                <Select required value={String(watch("state_id"))} onValueChange={value => {
                   setValue(formField.name, value)
                   setValue("region_id", "")
                 }}>
@@ -261,7 +325,7 @@ export default function AddWorkerPage() {
             <FormItem className="w-80">
               <FormLabel>Shaxar/Tuman *</FormLabel>
               <FormControl>
-                <Select required onValueChange={value => setValue(formField.name, value)}>
+                <Select required value={String(watch("region_id"))} onValueChange={value => setValue(formField.name, value)}>
                   <SelectTrigger className="w-full">
                     <SelectValue />
                   </SelectTrigger>
@@ -284,16 +348,19 @@ export default function AddWorkerPage() {
             </FormItem>}
           />
 
-          <FormField control={control} name={"status"} render={({ field: formField }) => 
+          <FormField control={control} name={"section_id"} render={({ field: formField }) => 
             <FormItem className="w-80">
-              <FormLabel>Xodim statusi *</FormLabel>
+              <FormLabel>Bo'lim *</FormLabel>
               <FormControl>
-                <Select disabled onValueChange={value => setValue(formField.name, value as WorkerStatus)}>
+                <Select required value={String(watch("section_id"))} onValueChange={value => {
+                  setValue(formField.name, Number(value))
+                  setValue("position_id", 0)
+                }}>
                   <SelectTrigger className="w-full">
-                    <SelectValue />
+                    <SelectValue placeholder={"Bo'lim tanlang"} />
                   </SelectTrigger>
-                  <SelectContent>
-                    {options.WORKER_STATUS.map((wrk_sts) => ( <SelectItem key={wrk_sts.id} value={String(wrk_sts.id)}> {wrk_sts.name} </SelectItem> ))}
+                  <SelectContent >
+                    {options.sections.map((sect) => ( <SelectItem key={sect.id} value={String(sect.id)}> {sect.name} </SelectItem> ))}
                   </SelectContent>
                 </Select>
               </FormControl>
@@ -305,9 +372,9 @@ export default function AddWorkerPage() {
             <FormItem className="w-80">
               <FormLabel>Lavozimi *</FormLabel>
               <FormControl>
-                <Select required onValueChange={value => setValue(formField.name, value)}>
+                <Select required disabled={!watch("section_id")} value={String(watch("position_id"))} onValueChange={value => setValue(formField.name, Number(value))}>
                   <SelectTrigger className="w-full">
-                    <SelectValue />
+                    <SelectValue placeholder={"Avval bo'lim tanlang 👆"} />
                   </SelectTrigger>
                   <SelectContent>
                     {options.positions.map((pstn) => ( <SelectItem key={pstn.id} value={String(pstn.id)}> {pstn.name} </SelectItem> ))}
@@ -419,7 +486,7 @@ export default function AddWorkerPage() {
             <FormItem className="w-80">
               <FormLabel>Ma'sul xodim</FormLabel>
               <FormControl>
-                <Input disabled type={"text"} value={formField.value ?? ""} defaultValue={"user.admin"}/>
+                <Input disabled type={"text"} value={formField.value ?? "user.admin"} />
               </FormControl>
             </FormItem>}
           />
@@ -428,14 +495,14 @@ export default function AddWorkerPage() {
             <FormItem className="w-80 h-80">
               <FormLabel htmlFor="photo" >Rasm yuklash</FormLabel>
               <FormControl>
-                {imageUrl ? (
+                {image_path ? (
                   <div className="mt-4 relative">
                     <PhotoProvider>
-                      <PhotoView src={`https://garant-hr.uz/api/public/storage/${imageUrl}`}>
-                        <img src={`https://garant-hr.uz/api/public/storage/${imageUrl}`} alt="Xodim rasmi" className="w-full h-72 object-cover rounded-md"/>
+                      <PhotoView src={`${base + image_path}`}>
+                        <img src={`${base + image_path}`} alt="Xodim rasmi" className="w-full h-72 object-cover rounded-md"/>
                       </PhotoView>
                     </PhotoProvider>
-                    <Button variant="destructive" className="mt-2 absolute bottom-1 right-1" onClick={handleImageDelete} disabled={loading}>
+                    <Button variant="destructive" className="mt-2 absolute bottom-1 right-1" onClick={() => handleImageDelete(image_path)} disabled={loading}>
                       O'chirish
                     </Button>
                   </div>
@@ -444,7 +511,6 @@ export default function AddWorkerPage() {
                     onChange={(e) => {
                       const file = e.target.files?.[0];
                       if (file) {
-                        field.onChange(file); // `react-hook-form` bilan ishlashi uchun
                         handleImageUpload(e);
                       }
                     }}
@@ -455,9 +521,7 @@ export default function AddWorkerPage() {
             </FormItem>)}
           />
 
-          <Button type="submit" className="w-full">
-            Saqlash
-          </Button>
+          <Button type="submit" className="w-full"> Saqlash </Button>
         </form>
       </Form>
       </Card>

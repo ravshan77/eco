@@ -37,14 +37,16 @@ const EditSectionModal = ({ open, onOpenChange, fetchData, data }: Props) => {
   const onSubmit = async (data: FormData) => {
     try {
       setIsLoading(true);
-      const res = await sectionsAPI.update(data);
-      if (res.status) {
+      const response = await sectionsAPI.update(data);
+      if (response.status) {
         toast({ title: "Muvaffaqiyatli", description: "Bo'lim tahrirlandi" });
         fetchData()
         handleClose()
+      } else {
+        throw new Error(response.error.message)
       }
-    } catch (err: any) {
-      toast({ variant: "destructive", title: "Xatolik yuz berdi", description: err?.message });
+    } catch (err) {
+      toast({ variant: "destructive", title: "Xatolik yuz berdi", description: String(err) });
     } finally {
       setIsLoading(false);
     }

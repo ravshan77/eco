@@ -2,56 +2,58 @@ import { Card } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
 import { toast } from '@/components/ui/use-toast';
 import { Button } from '../../components/ui/button';
-import { workersAPI } from '@/services/workers.service';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useState, useEffect, ChangeEvent } from 'react';
-import { TWorkers, WorkerStatusEnum } from '@/types/types';
 import { PhotoProvider, PhotoView } from 'react-photo-view';
 import { LoadingOverlay } from '@/components/ui/loading-overlay';
 import { ChevronLeft, PenLine, Plus, Settings } from 'lucide-react';
+import { GetWorkers, workersAPI } from '@/services/workers.service';
+import { PaginationMeta, TWorkers, WorkerStatusEnum } from '@/types/types';
+import { DEFAULT_META_DATA, MONTHS, StatusInfo, WORKER_STATUS_INFO, YEARS } from '@/constants';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { _facke_workers, ITEMS_PER_PAGE, MONTHS, StatusInfo, WORKER_STATUS_INFO, YEARS } from '@/constants';
+
 
 export default function Workers() {
   // STETS
-  const [data, setData] = useState(_facke_workers);
+  const [data, setData] = useState<TWorkers[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState(''); 
-  
+  const [filtersQuery, setFiltersQuery] = useState({ search:"" });
+  const [meta, setMeta] = useState<PaginationMeta>(DEFAULT_META_DATA);
+
   // VARABELS
-  const filteredWorkers = data.filter((wkr) => wkr.name.toLowerCase().includes(searchQuery.toLowerCase()));
-  const totalPages = Math.ceil(filteredWorkers.length / ITEMS_PER_PAGE);
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const endIndex = startIndex + ITEMS_PER_PAGE;
-  const currentData = filteredWorkers.slice(startIndex, endIndex);
+  const current_page = meta?.current_page
+  const total_pages = meta?.total;
   
   // HOOKS
   const navigate = useNavigate();
 
   // EFFECTS
   useEffect(() => {
-    // fetchWorkers();
+    fetchWorkers({ filters: filtersQuery, page_number:1 });
   }, []);
+  
 
-
-  const fetchWorkers = async () => {
+  const fetchWorkers = async ({ filters, page_number } : GetWorkers) => {
+    setIsLoading(true);
     try {
-      setIsLoading(true);
-      const data = await workersAPI.getAll();
-      setData(data);
-      toast({ title: "Muvaffaqiyatli yuklandi", description: "Topshiriqlar ro'yxati yangilandi" });
+      const response = await workersAPI.getAll({filters, page_number});
+      if(response.status){
+        setData(response.resoult.data);
+        setMeta(response.resoult.meta);
+        toast({ title: "Muvaffaqiyatli yuklandi", description: "Xodimlar ro'yxati yuklandi" });
+      } else {
+        throw new Error(response.error.message)
+      }
     } catch (err) {
-      toast({ variant: "destructive", title: "Xatolik yuz berdi", description: "Topshiriqlarni yuklashda xatolik yuz berdi" });
-      console.error('Error fetching tasks:', err);
+      toast({ variant: "destructive", title: "Xatolik yuz berdi", description: String(err) });
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
-    setCurrentPage(1);
+    setFiltersQuery( prev =>  ({ ...prev, [e.target.name] : e.target.value}));
+    fetchWorkers({ filters: { search: e.target.value }, page_number: 1})
   };
 
   const handleGoBack = () => navigate(-1)
@@ -71,7 +73,6 @@ export default function Workers() {
     }
   }
 
-
   return (
     <>
       {isLoading && <LoadingOverlay />}
@@ -90,7 +91,7 @@ export default function Workers() {
         <Card className="p-4 sm:p-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
             <div className="w-full sm:max-w-md">
-              <Input type="search" placeholder="Topshiriqni qidirish..." className="w-full" value={searchQuery} onChange={handleSearch} />
+              <Input type="search" name='search' placeholder="Xodim qidirish..." className="w-full" value={filtersQuery.search} onChange={handleSearch} />
             </div>
             <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 w-full sm:w-auto">
               <Select>
@@ -130,7 +131,7 @@ export default function Workers() {
 
               {/* BODY QISMI */}
               <tbody className="cursor-pointer">
-                {currentData.map((wkr, ind) => (
+                {data?.map((wkr, ind) => (
                   <tr key={wkr.id} className="border-b border-gray-300">
                     <td className="p-2 border border-gray-300"> {ind + 1} </td>
                     <td className="p-2 border border-gray-300"> 
@@ -162,11 +163,11 @@ export default function Workers() {
 
           <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="text-sm text-muted-foreground order-2 sm:order-1">
-              Jami {filteredWorkers.length} xodim
+              Jami {total_pages} xodim
             </div>
             <div className="flex items-center space-x-2 order-1 sm:order-2">
-              <Button variant="outline" size="sm" onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))} disabled={currentPage === 1}> Oldingi </Button>
-              <Button variant="outline" size="sm" onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages)) } disabled={currentPage === totalPages}> Keyingi </Button>
+              <Button variant="outline" size="sm" onClick={() => fetchWorkers({ filters: filtersQuery, page_number: current_page - 1})} disabled={current_page === 1}> Oldingi </Button>
+              <Button variant="outline" size="sm" onClick={() => fetchWorkers({ filters: filtersQuery, page_number: current_page + 1}) } disabled={current_page === total_pages}> Keyingi </Button>
             </div>
           </div>
         </Card>

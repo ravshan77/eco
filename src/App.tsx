@@ -5,9 +5,9 @@ import { SidebarProvider } from './components/ui/sidebar';
 import MainLayout from './layouts/MainLayout';
 import Dashboard from './pages/dashboard/page';
 import Workers from './pages/workers/Workers';
-import NewEmployee from './pages/workers/NewEmployee';
-import ActiveEmployees from './pages/workers/ActiveEmployees';
-import ArchivedEmployees from './pages/workers/ArchivedEmployees';
+// import NewEmployee from './pages/workers/NewEmployee';
+// import ActiveEmployees from './pages/workers/ActiveEmployees';
+// import ArchivedEmployees from './pages/workers/ArchivedEmployees';
 import Tasks from './pages/tasks/Tasks';
 import NewTasks from './pages/tasks/NewTasks';
 import CompletedTasks from './pages/tasks/CompletedTasks';
@@ -21,6 +21,7 @@ import TasksToEmployee from './pages/tasks/TasksToEmployee';
 import AddWorkerPage from './pages/workers/AddWorkerPage';
 import EditWorkerPage from './pages/workers/EditWorkerPage';
 import Sections from './pages/sections/Sections';
+import Positions from './pages/positions/Positions';
 
 function App() {
   return (
@@ -34,11 +35,12 @@ function App() {
               <Route index element={<Dashboard />} />
               <Route path="workers" element={<Workers />} />
               <Route path="informations/sections" element={<Sections />} />
-              <Route path="workers/new" element={<NewEmployee />} />
+              <Route path="informations/positions" element={<Positions />} />
+              {/* <Route path="workers/new" element={<NewEmployee />} /> */}
               <Route path="workers/add-new-worker" element={<AddWorkerPage />} />
               <Route path="workers/edit-worker/:id" element={<EditWorkerPage />} />
-              <Route path="workers/active" element={<ActiveEmployees />} />
-              <Route path="workers/archived" element={<ArchivedEmployees />} />
+              {/* <Route path="workers/active" element={<ActiveEmployees />} /> */}
+              {/* <Route path="workers/archived" element={<ArchivedEmployees />} /> */}
               <Route path="tasks" element={<Tasks />} />
               <Route path="tasks/new" element={<NewTasks />} />
               <Route path="tasks/completed" element={<CompletedTasks />} />

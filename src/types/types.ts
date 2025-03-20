@@ -1,36 +1,36 @@
-export type WorkerStatus = "1" | "2" | "3" | "4" | null
+export type WorkerStatus = 1 | 2 | 3 | 4
 
 export enum WorkerStatusEnum {
-  ish_faoliyatida = "1",
-  tatil = "2",
-  komandirovfka = "3",
-  ishdan_boshatilingan = "4",
+  ish_faoliyatida = 1,
+  tatil = 2,
+  komandirovfka = 3,
+  ishdan_boshatilingan = 4,
 }
 
 export interface TWorkers {
-  id?: number | string | null;
-  name: string;
-  section_id?: string | null;
-  section_name?: string | null;
-  position_id: string;
-  position_name?: string;
-  passport_series: string;
+  id?: number;
   birthday: string;
+  name: string;
+  position_id: number;
   phone_youre: string;
-  phone_additional?: string | null;
-  phone_work?: string | null;
-  address?: string | null;
-  education?: string | null;
-  education_place?: string | null;
-  photo?: string | null;
-  passport_number?: string | null;
-  state_id?: string | null;
-  state_name?: string | null;
-  region_id?: string | null;
-  region_name?: string | null;
+  status?: number;
+  section_id: number | null;
+  created_at?: string | null;
+  address: string | null;
+  education: string | null;
+  education_place: string | null;
+  passport_number: string | null;
+  passport_series: string | null;
+  phone_additional: string | null;
+  phone_work: string | null;
+  photo: string | null;
+  position_name: string | null;
+  region_id: string | null;
+  region_name: string | null;
   responsible_worker?: string | null;
-  status: WorkerStatus;
-  date?: string
+  section_name: string | null;
+  state_id: string | null;
+  state_name: string | null;
 }
 
 export interface TSections {
@@ -40,6 +40,14 @@ export interface TSections {
     created_at?: string
 }
 
+export interface TPositions {
+  id?: number,
+  name: string,
+  section_id: number,
+  section_name?: string,
+  responsible_worker?: string,
+  created_at?: string
+}
 
 export interface Task {
   id: string;
@@ -65,5 +73,35 @@ export interface User {
 export interface SingleOption {
   id: string;
   name: string;
-  label?: string;
+}
+
+type PaginationLinks = {
+  url: string | null,
+  label: string | null,
+  active: boolean
+}
+
+export type PaginationMeta =  { 
+  current_page: number, 
+  from: number, 
+  last_page: number, 
+  links: PaginationLinks[],
+  path: string | null,
+  per_page: number,
+  to: number,
+  total: number  
+}
+export type ResponseType<T> = {
+  resoult:{
+    data: T[], 
+    links: {
+      first: string | null,
+      last: string | null,
+      prev: string | null,
+      next: string | null,
+    },
+    meta: PaginationMeta,
+  },
+  status: boolean,
+  error: { message: any }
 }

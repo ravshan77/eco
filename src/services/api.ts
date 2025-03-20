@@ -2,9 +2,14 @@ import axios from 'axios';
 import { toast } from '../components/ui/use-toast';
 import { User, Task, TWorkers } from '../types/types';
 
-// https://garant-hr.uz/api/anketa-web-app/store/image
+export const base = "https://ecouzkpi-main-9umb8r.laravel.cloud"
+export const baseUrl = `${base}/api`
+
+// export const base = "http://192.168.1.3:1010"
+// export const baseUrl = `${base}/api`
+
 const api = axios.create({
-  baseURL: 'https://ecouzkpi-main-9umb8r.laravel.cloud/api',
+  baseURL: baseUrl,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -41,14 +46,14 @@ api.interceptors.response.use(
 
 // Universal API functions
 export const apiRequest = async <T>(method: string, url: string, data?: any, headers = {}) => {
-  // console.log(data instanceof FormData ? "forumdata" : "jsondata")
   try {
+    const isFormData = data instanceof FormData;
     const response = await api.request<T>({
       method,
       url,
       data,
       headers: {
-        ...(data instanceof FormData ? {"Content-Type": "multipart/form-data"} : { "Content-Type": "application/json" }), // FormData bo‘lsa, Content-Type set qilinmaydi
+        ...(isFormData ? {} : { "Content-Type": "application/json" }), // FormData bo‘lsa, Content-Type avtomatik qo‘shiladi
         ...headers,
       },
     });

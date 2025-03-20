@@ -1,21 +1,21 @@
-import { useState } from "react";
-import { TSections } from "@/types/types";
+import { memo, useState } from "react";
+import { TPositions } from "@/types/types";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
-import { sectionsAPI } from "@/services/sections.service";
+import { positionsAPI } from "@/services/positions.service";
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter } from "@/components/ui/alert-dialog";
 
 interface ConfirmProps {
   open: boolean;
-  data: TSections;
+  data: TPositions;
   fetchData: () => Promise<void>;
-  onOpenChange: (open: TSections) => void;
+  onOpenChange: (open: TPositions) => void;
 }
 
-export const DeleteSectionModal = ({ open, fetchData, onOpenChange, data }: ConfirmProps) => {
+export const DeletePositionModal = memo(({ open, fetchData, onOpenChange, data }: ConfirmProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleClose = () => onOpenChange({name:""})
+  const handleClose = () => onOpenChange({name:"", section_id:0,})
 
   const onConfirm = async () => {
     if (!data.id) {
@@ -23,9 +23,9 @@ export const DeleteSectionModal = ({ open, fetchData, onOpenChange, data }: Conf
     }
     try {
       setIsLoading(true);
-      const response = await sectionsAPI.delete(data?.id);
+      const response = await positionsAPI.delete(data?.id);
       if (response.status) {
-        toast({ title: "Muvaffaqiyatli", description: "Bo'lim o'chirildi" });
+        toast({ title: "Muvaffaqiyatli", description: "Lavozim o'chirildi" });
         fetchData()
         handleClose()
       }else {
@@ -43,7 +43,7 @@ export const DeleteSectionModal = ({ open, fetchData, onOpenChange, data }: Conf
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Tasdiqlash</AlertDialogTitle>
-          <AlertDialogDescription>Siz haqiqatdan ham <b>{data.name}</b> bo'limini o'chirishni xohlaysizmi?</AlertDialogDescription>
+          <AlertDialogDescription>Siz haqiqatdan ham <b>{data.name}</b> lavozimni o'chirishni xohlaysizmi?</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter className="flex justify-end space-x-2">
           <Button variant="outline" disabled={isLoading} className='mr-3' onClick={handleClose}>Bekor qilish</Button>
@@ -52,4 +52,4 @@ export const DeleteSectionModal = ({ open, fetchData, onOpenChange, data }: Conf
       </AlertDialogContent>
     </AlertDialog>
   );
-};
+});

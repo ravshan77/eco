@@ -34,10 +34,10 @@ const items: MenuItem[] = [
         title: "Bo'limlar",
         url: "/informations/sections",
       },
-      // {
-      //   title: "Yangi topshiriqlar",
-      //   url: "/tasks  ",
-      // },
+      {
+        title: "Lavozimlar",
+        url: "/informations/positions",
+      },
       // {
       //   title: "Bajarilayotgan",
       //   url: "/tasks/in-progress",
@@ -79,18 +79,6 @@ const items: MenuItem[] = [
       {
         title: "Barcha xodimlar",
         url: "/workers",
-      },
-      {
-        title: "Yangi xodim",
-        url: "/workers/new",
-      },
-      {
-        title: "Faol xodimlar",
-        url: "/workers/active",
-      },
-      {
-        title: "Arxivdagi xodimlar",
-        url: "/workers/archived",
       },
     ],
   },

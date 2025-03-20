@@ -1,40 +1,45 @@
 import * as z from 'zod';
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { SingleOption } from '@/types/types';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { sectionsAPI } from '@/services/sections.service';
+import { positionsAPI } from '@/services/positions.service';
 import { LoadingOverlay } from '@/components/ui/loading-overlay';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-const sectionsSchema = z.object({
+const positionSchema = z.object({
   id: z.number().optional(),
   created_at: z.string().optional(),
+  section_name: z.string().optional(),
   responsible_worker: z.string().optional(),
+  section_id: z.number().min(1, { message: "Bo'lim tanlanishi shart" }),
   name: z.string().min(3, "Bo'lim nomi 3 ta harfdan ko'p bo'lishi kerak"),
 });
 
-type FormData = z.infer<typeof sectionsSchema>;
+type FormData = z.infer<typeof positionSchema>;
 
 interface Props {
   open: boolean;
   fetchData: () => Promise<void>;
   onOpenChange: (open: boolean) => void;
+  options: { sections: SingleOption[] }
 }
 
-const AddSectionModal = ({ open, onOpenChange, fetchData }: Props) => {
+export const AddPositionModal = memo(({ open, onOpenChange, fetchData, options }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const form = useForm<FormData>({ resolver: zodResolver(sectionsSchema) });
-  const { handleSubmit, register, formState } = form
+  const form = useForm<FormData>({ resolver: zodResolver(positionSchema) });
+  const { handleSubmit, register, formState, setValue, watch } = form
 
   const onSubmit = async (data: FormData) => {
+    setIsLoading(true);
     try {
-      setIsLoading(true);
-      const response = await sectionsAPI.create(data);
+      const response = await positionsAPI.create(data);
       if (response.status) {
         toast({ title: "Muvaffaqiyatli", description: "Yangi bo'lim qo'shildi" });
         fetchData()
@@ -48,19 +53,34 @@ const AddSectionModal = ({ open, onOpenChange, fetchData }: Props) => {
       setIsLoading(false);
     }
   };
+  
+  console.log("add")
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange} modal={true}>
       <DialogContent onInteractOutside={(e) => e.preventDefault()}>
       {isLoading && <LoadingOverlay />}
         <DialogHeader>
-          <DialogTitle>Yangi bo'lim qo'shish</DialogTitle>
+          <DialogTitle>Yangi lavozim qo'shish</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="name">Nomi</Label>
-            <Input {...register('name')} id="name" autoFocus required placeholder="Bo'lim nomini kiriting" className={formState.errors.name ? 'border-red-500' : ''} />
+            <Input {...register('name')} id="name" autoFocus required placeholder="Lavozim nomini kiriting" className={formState.errors.name ? 'border-red-500' : ''} />
             {formState.errors.name && (<p className="text-sm text-red-500"> {formState.errors.name.message} </p>)}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="name">Bo'lim</Label>
+            <Select required value={String(watch("section_id"))} onValueChange={value => setValue("section_id", Number(value))}>
+              <SelectTrigger className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {options.sections.map((ste) => ( <SelectItem key={ste.id} value={String(ste.id)}> {ste.name} </SelectItem> ))}
+              </SelectContent>
+              </Select>
+            {formState.errors.section_id && (<p className="text-sm text-red-500"> {formState.errors.section_id.message} </p>)}
           </div>
 
           <div className="flex justify-end space-x-2">
@@ -71,6 +91,4 @@ const AddSectionModal = ({ open, onOpenChange, fetchData }: Props) => {
       </DialogContent>
     </Dialog>
   );
-};
-
-export default AddSectionModal; 
+});

@@ -1,23 +1,25 @@
-import { TSections } from '@/types/types';
 import { Card } from '@/components/ui/card';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
+import { SingleOption, TPositions } from '@/types/types';
 import { useState, useEffect, useCallback } from 'react';
 import { sectionsAPI } from '@/services/sections.service';
-import AddSectionModal from './components/AddSectionModal';
-import EditSectionModal from './components/EditSectionModal';
+import { positionsAPI } from '@/services/positions.service';
+import { AddPositionModal } from './components/AddPositionModal';
 import { LoadingOverlay } from '@/components/ui/loading-overlay';
-import { DeleteSectionModal } from './components/DeleteSectionModal';
+import { EditPositionModal } from './components/EditPositionModal';
+import { DeletePositionModal } from './components/DeletePositionModal';
 import { ChevronLeft, PenLine, Plus, Settings, Trash2 } from 'lucide-react';
 
-export default function Sections() {
+export default function Positions() {
   // **STATES**
-  const [data, setData] = useState<TSections[]>([]);
+  const [data, setData] = useState<TPositions[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isOpenAddModal, setOpenAddModal] = useState(false);
-  const [isOpenEditModal, setOpenEditModal] = useState<TSections | null>(null);
-  const [isDeleteModal, setOpenDeleteModal] = useState<TSections | null>(null);
+  const [isOpenEditModal, setOpenEditModal] = useState<TPositions | null>(null);
+  const [isDeleteModal, setOpenDeleteModal] = useState<TPositions | null>(null);
+  const [options, setOptions] = useState<{ sections: SingleOption[] }>({ sections: [] })
 
   // **HOOKS**
   const navigate = useNavigate();
@@ -26,7 +28,7 @@ export default function Sections() {
   const fetchData = useCallback(async () => {
     try {
       setIsLoading(true);
-      const response = await sectionsAPI.getAll();
+      const response = await positionsAPI.getAll();
       if (response.status) {
         setData(response.resoult);
         toast({ title: "Muvaffaqiyatli yuklandi", description: "Bo'limlar ro'yxati yangilandi" });
@@ -44,27 +46,51 @@ export default function Sections() {
     fetchData();
   }, [fetchData]);
 
+  // get sections
+  useEffect(() => {
+    let isMounted = true;
+    const fetchData = async () => {
+      try {
+        const response = await sectionsAPI.getAll();
+      if (isMounted && response.status) {
+        const resp = response.resoult.map(pstn => ({ id: String(pstn.id), name: pstn?.name }))
+        setOptions(prev => ({ ...prev, sections: resp }));
+      }else {
+        throw new Error(response.error.message)
+      }
+      } catch (err) {
+        toast({ variant: "destructive", title: "Xatolik yuz berdi", description: String(err) });
+      }
+    };
+
+    fetchData();
+
+    return () => {
+        isMounted = false; // Component unmounted bo'lsa, state update qilinmaydi
+    };
+  }, []);
+
   // **HANDLERS**
   const handleGoBack = () => navigate(-1);
   const handleAddModal = () => setOpenAddModal(true);
-  const handleEdit = (item: TSections) => setOpenEditModal(item);
-  const handleDelete = (item: TSections) => setOpenDeleteModal(item);
+  const handleEdit = (item: TPositions) => setOpenEditModal(item);
+  const handleDelete = (item: TPositions) => setOpenDeleteModal(item);
 
   return (
     <>
       {isLoading && <LoadingOverlay />}
 
       {/* **MODALS** */}
-      <AddSectionModal open={isOpenAddModal} onOpenChange={setOpenAddModal} fetchData={fetchData} />
-      {isOpenEditModal && (<EditSectionModal open={true} onOpenChange={() => setOpenEditModal(null)} fetchData={fetchData} data={isOpenEditModal} />)}
-      {isDeleteModal && (<DeleteSectionModal open={true} onOpenChange={() => setOpenDeleteModal(null)} fetchData={fetchData} data={isDeleteModal} /> )}
+      {isOpenAddModal && <AddPositionModal open={isOpenAddModal} options={options} onOpenChange={setOpenAddModal} fetchData={fetchData} />}
+      {isOpenEditModal && (<EditPositionModal open={true} options={options} onOpenChange={() => setOpenEditModal(null)} fetchData={fetchData} data={isOpenEditModal} />)}
+      {isDeleteModal && (<DeletePositionModal open={true} onOpenChange={() => setOpenDeleteModal(null)} fetchData={fetchData} data={isDeleteModal} /> )}
 
       {/* **LAYOUT** */}
       <div className="space-y-4 min-w-[360px]">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <Button onClick={handleGoBack} className="w-full sm:w-auto"> <ChevronLeft className="mr-2 h-4 w-4" /> Ortga </Button>
-          <h2 className="text-2xl font-bold"> Bo'limlar ro'yxati </h2>
-          <Button onClick={handleAddModal} type="button" className="w-full sm:w-auto"> <Plus className="mr-2 h-4 w-4" /> Bo'lim qo'shish </Button>
+          <h2 className="text-2xl font-bold"> Lavozimlar ro'yxati </h2>
+          <Button onClick={handleAddModal} type="button" className="w-full sm:w-auto"> <Plus className="mr-2 h-4 w-4" /> Lavozim qo'shish </Button>
         </div>
 
         {/* **TABLE** */}
@@ -76,6 +102,7 @@ export default function Sections() {
                 <tr className="border-b h-12 border-gray-300">
                   <th className="p-2 text-left w-8 border border-gray-300">№</th>
                   <th className="p-2 text-left w-8 border border-gray-300">Sana</th>
+                  <th className="p-2 text-left border border-gray-300">Lavozim nomi</th>
                   <th className="p-2 text-left border border-gray-300">Bo'lim nomi</th>
                   <th className="p-2 text-left border border-gray-300">Ma'sul xodim</th>
                   <th className="p-2 text-center w-8 border border-gray-300">
@@ -93,6 +120,7 @@ export default function Sections() {
                     <td className="p-2 border border-gray-300"> {ind + 1} </td>
                     <td className="p-2 border border-gray-300"> {item.created_at} </td>
                     <td className="p-2 border border-gray-300"> {item.name} </td>
+                    <td className="p-2 border border-gray-300"> {item.section_name} </td>
                     <td className="p-2 border border-gray-300"> {item.responsible_worker} </td>
                     <td className="p-2 border border-gray-300">
                       <div className="flex justify-center">
