@@ -18,7 +18,7 @@ const positionSchema = z.object({
   section_name: z.string().optional(),
   responsible_worker: z.string().optional(),
   section_id: z.number().min(1, { message: "Bo'lim tanlanishi shart" }),
-  name: z.string().min(3, "Bo'lim nomi 3 ta harfdan ko'p bo'lishi kerak"),
+  name: z.string().min(2, "Bo'lim nomi 2 ta harfdan ko'p bo'lishi kerak"),
 });
 
 type FormData = z.infer<typeof positionSchema>;
@@ -41,7 +41,7 @@ export const AddPositionModal = memo(({ open, onOpenChange, fetchData, options }
     try {
       const response = await positionsAPI.create(data);
       if (response.status) {
-        toast({ title: "Muvaffaqiyatli", description: "Yangi bo'lim qo'shildi" });
+        toast({ title: "Muvaffaqiyatli", description: "Yangi lavozim qo'shildi" });
         fetchData()
         onOpenChange(false)
       }else {
@@ -54,7 +54,6 @@ export const AddPositionModal = memo(({ open, onOpenChange, fetchData, options }
     }
   };
   
-  console.log("add")
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange} modal={true}>
@@ -84,8 +83,8 @@ export const AddPositionModal = memo(({ open, onOpenChange, fetchData, options }
           </div>
 
           <div className="flex justify-end space-x-2">
-            <Button type="button" variant="outline" className='mr-3' onClick={() => onOpenChange(false)} disabled={isLoading}> Bekor qilish </Button>
-            <Button type="submit" className='ml-3' disabled={isLoading}> Saqlash </Button>
+            <Button type="button" variant="yellow" className='mr-3' onClick={() => onOpenChange(false)} disabled={isLoading}> Oynani yopish </Button>
+            <Button type="submit" className='ml-3' variant={"green"} disabled={isLoading}> Saqlash </Button>
           </div>
         </form>
       </DialogContent>

@@ -1,21 +1,22 @@
-import { memo, useState } from "react";
-import { TPositions } from "@/types/types";
+import { useState } from "react";
+import { TWorkersOrders } from "@/types/types";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
-import { positionsAPI } from "@/services/positions.service";
+import { GetWorkersOrders, workersOrdersAPI } from "@/services/workersOrders.service";
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter } from "@/components/ui/alert-dialog";
 
 interface ConfirmProps {
   open: boolean;
-  data: TPositions;
-  fetchData: () => Promise<void>;
-  onOpenChange: (open: TPositions) => void;
+  filtersQuery: any
+  data: TWorkersOrders;
+  onOpenChange: (open: boolean) => void;
+  fetchData: (params: GetWorkersOrders) => Promise<void>;
 }
 
-export const DeletePositionModal = memo(({ open, fetchData, onOpenChange, data }: ConfirmProps) => {
+export const DeleteOrderModal = ({ open, fetchData, onOpenChange, data, filtersQuery }: ConfirmProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleClose = () => onOpenChange({name:"", section_id:0,})
+  const handleClose = () => onOpenChange(false)
 
   const onConfirm = async () => {
     if (!data.id) {
@@ -23,10 +24,10 @@ export const DeletePositionModal = memo(({ open, fetchData, onOpenChange, data }
     }
     try {
       setIsLoading(true);
-      const response = await positionsAPI.delete(data?.id);
+      const response = await workersOrdersAPI.delete(data?.id);
       if (response.status) {
-        toast({ title: "Muvaffaqiyatli", description: "Lavozim o'chirildi" });
-        fetchData()
+        toast({ title: "Muvaffaqiyatli", description: "Buyruq o'chirildi" });
+        fetchData({filters: { ...filtersQuery}, page_number: 1})
         handleClose()
       }else {
         throw new Error(response.error.message)
@@ -43,7 +44,7 @@ export const DeletePositionModal = memo(({ open, fetchData, onOpenChange, data }
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Tasdiqlash</AlertDialogTitle>
-          <AlertDialogDescription>Siz haqiqatdan ham <b>{data.name}</b> lavozimni o'chirishni xohlaysizmi?</AlertDialogDescription>
+          <AlertDialogDescription>Siz haqiqatdan ham <b>{data.order_number}</b> raqamli buyruqni o'chirishni xohlaysizmi?</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter className="flex justify-end space-x-2">
           <Button variant="yellow" disabled={isLoading} className='mr-3' onClick={handleClose}>Oynani yopish</Button>
@@ -52,4 +53,4 @@ export const DeletePositionModal = memo(({ open, fetchData, onOpenChange, data }
       </AlertDialogContent>
     </AlertDialog>
   );
-});
+};

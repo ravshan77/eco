@@ -121,19 +121,11 @@ const AddTaskModal = ({ open, onOpenChange, onSubmit }: AddTaskModalProps) => {
           </div>
 
           <div className="flex justify-end space-x-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-              disabled={isSubmitting}
-            >
-              Bekor qilish
+            <Button type="button" variant="yellow" className='mr-2' onClick={() => onOpenChange(false)} disabled={isSubmitting}>
+              Oynani yopish
             </Button>
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? (
-                <LoadingSpinner size="sm" className="mr-2" />
-              ) : null}
-              Qo'shish
+            <Button type="submit" className='ml-2' variant={"green"} disabled={isSubmitting}>
+              {isSubmitting ? (<LoadingSpinner size="sm" className="mr-2" /> ) : null} Qo'shish
             </Button>
           </div>
         </form>

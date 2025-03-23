@@ -1,6 +1,7 @@
-export type WorkerStatus = 1 | 2 | 3 | 4
+export type WorkerOrdersStatus = 1 | 2 | 3 | 4 | 0
 
-export enum WorkerStatusEnum {
+export enum WorkerOrdersStatusEnum {
+  buyruq_chiqarilmagan = 0,
   ish_faoliyatida = 1,
   tatil = 2,
   komandirovfka = 3,
@@ -25,11 +26,11 @@ export interface TWorkers {
   phone_work: string | null;
   photo: string | null;
   position_name: string | null;
-  region_id: string | null;
+  region_id: number | null;
   region_name: string | null;
   responsible_worker?: string | null;
   section_name: string | null;
-  state_id: string | null;
+  state_id: number | null;
   state_name: string | null;
 }
 
@@ -44,7 +45,7 @@ export interface TPositions {
   id?: number,
   name: string,
   section_id: number,
-  section_name?: string,
+  section_name?: string | null,
   responsible_worker?: string,
   created_at?: string
 }
@@ -104,4 +105,25 @@ export type ResponseType<T> = {
   },
   status: boolean,
   error: { message: any }
+}
+
+
+export type TWorkersOrders = {
+  id?: number,
+  worker_id: number,
+  worker_name?: string,
+  order_number?: string,
+  order_status: number,
+  order_date: string,
+  description?: string | null,
+  resposible_worker?: string,
+  created_at?: string
+}
+
+export type TAssigmentCategory =  {
+  id?: number,
+  name: string,
+  description?: string | null,
+  responsible_worker?: string,
+  created_at?: string
 }

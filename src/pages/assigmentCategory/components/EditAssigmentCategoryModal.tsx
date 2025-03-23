@@ -6,44 +6,41 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { SingleOption, TPositions } from '@/types/types';
-import { positionsAPI } from '@/services/positions.service';
+import { TAssigmentCategory } from '@/types/types';
 import { LoadingOverlay } from '@/components/ui/loading-overlay';
+import { assigmenCategorytAPI } from '@/services/assigmentCategory.service';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const positionSchema = z.object({
   id: z.number().optional(),
-  created_at: z.string().optional(),
-  section_name: z.string().nullable().optional(),
-  responsible_worker: z.string().optional(),
-  section_id: z.number().min(1, { message: "Bo'lim tanlanishi shart" }),
+  description: z.string().nullable().optional(),
   name: z.string().min(2, "Bo'lim nomi 2 ta harfdan ko'p bo'lishi kerak"),
+  responsible_worker: z.string().optional(),
+  created_at: z.string().optional()
 });
 
 type FormData = z.infer<typeof positionSchema>;
 
 interface Props {
   open: boolean;
-  data: TPositions;
+  data: TAssigmentCategory;
   fetchData: () => Promise<void>;
-  onOpenChange: (open: TPositions) => void;
-  options: { sections: SingleOption[] }
+  onOpenChange: (open: TAssigmentCategory) => void;
 }
 
-export const EditPositionModal = memo(({ open, onOpenChange, fetchData, data, options }: Props) => {
+export const EditAssigmentCategoryModal = memo(({ open, onOpenChange, fetchData, data }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm<FormData>({ resolver: zodResolver(positionSchema), values: data });
-  const { handleSubmit, register, formState, setValue,  watch } = form
+  const { handleSubmit, register, formState } = form
 
-  const handleClose = () => onOpenChange({name:"", section_id: 0})
+  const handleClose = () => onOpenChange({name:""})
 
   const onSubmit = async (data: FormData) => {
     try {
       setIsLoading(true);
-      const response = await positionsAPI.update(data);
+      const response = await assigmenCategorytAPI.update(data);
       if (response.status) {
-        toast({ title: "Muvaffaqiyatli", description: "Lavozim tahrirlandi" });
+        toast({ title: "Muvaffaqiyatli", description: "Topshiriq kategoriyasi tahrirlandi" });
         fetchData()
         handleClose()
       }else {
@@ -56,38 +53,30 @@ export const EditPositionModal = memo(({ open, onOpenChange, fetchData, data, op
     }
   };  
 
-  console.log(formState.errors)
 
   return (
     <Dialog open={open.valueOf()} onOpenChange={handleClose} modal={true}>
       <DialogContent onInteractOutside={(e) => e.preventDefault()}>
       {isLoading && <LoadingOverlay />}
         <DialogHeader>
-          <DialogTitle>Lavozimni tahrirlash</DialogTitle>
+          <DialogTitle>Topshiriq kategoriyasini tahrirlash</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="name">Nomi</Label>
-            <Input {...register('name')} autoFocus={false} id="name" required placeholder="Lavozim nomini kiriting" className={formState.errors.name ? 'border-red-500' : ''} />
+            <Label htmlFor="name">Nomi *</Label>
+            <Input {...register('name')} autoFocus id="name" required placeholder="T/q kategoriyasi nomini kiriting" className={formState.errors.name ? 'border-red-500' : ''} />
             {formState.errors.name && (<p className="text-sm text-red-500"> {formState.errors.name.message} </p>)}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="name">Bo'lim</Label>
-            <Select required defaultValue={String(data.section_id)} value={String(watch("section_id"))} onValueChange={value => setValue("section_id", Number(value))}>
-              <SelectTrigger className="w-full"> 
-                <SelectValue placeholder="Bo'limni tanlang"/> 
-              </SelectTrigger>
-              <SelectContent>
-                {options.sections.map((ste) => ( <SelectItem key={ste.id} value={ste.id}> {ste.name} </SelectItem> ))}
-              </SelectContent>
-            </Select>
-            {formState.errors.section_id && (<p className="text-sm text-red-500"> {formState.errors.section_id.message} </p>)}
+            <Label htmlFor="description">Izoh</Label>
+            <Input {...register('description')} id="description" placeholder="Izoh" className={formState.errors.description ? 'border-red-500' : ''} />
+            {formState.errors.description && (<p className="text-sm text-red-500"> {formState.errors.description.message} </p>)}
           </div>
 
           <div className="flex justify-end space-x-2">
             <Button type="button" variant="yellow" className='mr-3' onClick={handleClose} disabled={isLoading}> Oynani yopish </Button>
-            <Button type="submit" className='ml-3' variant={"green"} disabled={isLoading}> Saqlash </Button>
+            <Button type="submit" variant={"green"} className='ml-3' disabled={isLoading}> Saqlash </Button>
           </div>
         </form>
       </DialogContent>

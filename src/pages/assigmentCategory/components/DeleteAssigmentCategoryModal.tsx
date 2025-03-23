@@ -1,21 +1,21 @@
 import { memo, useState } from "react";
-import { TPositions } from "@/types/types";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
-import { positionsAPI } from "@/services/positions.service";
+import { TAssigmentCategory } from "@/types/types";
+import { assigmenCategorytAPI } from "@/services/assigmentCategory.service";
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter } from "@/components/ui/alert-dialog";
 
 interface ConfirmProps {
   open: boolean;
-  data: TPositions;
+  data: TAssigmentCategory;
   fetchData: () => Promise<void>;
-  onOpenChange: (open: TPositions) => void;
+  onOpenChange: (open: TAssigmentCategory) => void;
 }
 
-export const DeletePositionModal = memo(({ open, fetchData, onOpenChange, data }: ConfirmProps) => {
+export const DeleteAssigmentCategoryModal = memo(({ open, fetchData, onOpenChange, data }: ConfirmProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleClose = () => onOpenChange({name:"", section_id:0,})
+  const handleClose = () => onOpenChange({name:""})
 
   const onConfirm = async () => {
     if (!data.id) {
@@ -23,9 +23,9 @@ export const DeletePositionModal = memo(({ open, fetchData, onOpenChange, data }
     }
     try {
       setIsLoading(true);
-      const response = await positionsAPI.delete(data?.id);
+      const response = await assigmenCategorytAPI.delete(data?.id);
       if (response.status) {
-        toast({ title: "Muvaffaqiyatli", description: "Lavozim o'chirildi" });
+        toast({ title: "Muvaffaqiyatli", description: "Topshiriq kategoriyasi o'chirildi" });
         fetchData()
         handleClose()
       }else {
@@ -43,7 +43,7 @@ export const DeletePositionModal = memo(({ open, fetchData, onOpenChange, data }
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Tasdiqlash</AlertDialogTitle>
-          <AlertDialogDescription>Siz haqiqatdan ham <b>{data.name}</b> lavozimni o'chirishni xohlaysizmi?</AlertDialogDescription>
+          <AlertDialogDescription>Siz haqiqatdan ham <b>{data.name}</b> topshiriq kategoriyasini o'chirishni xohlaysizmi?</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter className="flex justify-end space-x-2">
           <Button variant="yellow" disabled={isLoading} className='mr-3' onClick={handleClose}>Oynani yopish</Button>

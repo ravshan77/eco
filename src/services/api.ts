@@ -1,11 +1,14 @@
 import axios from 'axios';
 import { toast } from '../components/ui/use-toast';
-import { User, Task, TWorkers } from '../types/types';
+import { User, Task } from '../types/types';
 
-export const base = "https://ecouzkpi-main-9umb8r.laravel.cloud"
+// export const base = "https://ecouzkpi-main-9umb8r.laravel.cloud"
+// export const baseUrl = `${base}/api`
+
+export const base = "http://192.168.1.2:1010"
 export const baseUrl = `${base}/api`
 
-// export const base = "http://192.168.1.3:1010"
+// export const base = "http://10.100.104.111:1010"
 // export const baseUrl = `${base}/api`
 
 const api = axios.create({
@@ -78,30 +81,6 @@ export const tasksAPI = {
   update: (id: string, task: Partial<Task>) => apiRequest<Task>('PATCH', `/tasks/${id}`, task),
   delete: (id: string) => apiRequest('DELETE', `/tasks/${id}`),
   updateStatus: (id: string, status: Task['status']) => apiRequest<Task>('PATCH', `/tasks/${id}/status`, { status }),
-};
-
-// Employees
-export const employeesAPI = {
-  getAll: () => apiRequest<TWorkers[]>('GET', '/employees'),
-  getById: (id: string) => apiRequest<TWorkers>('GET', `/employees/${id}`),
-  create: (employee: Omit<TWorkers, 'id' | 'createdAt'>) =>  apiRequest<TWorkers>('POST', '/employees', { ...employee, createdAt: new Date().toISOString() }),
-  update: (id: string, employee: Partial<TWorkers>) => apiRequest<TWorkers>('PATCH', `/employees/${id}`, employee),
-  delete: (id: string) => apiRequest('DELETE', `/employees/${id}`),
-};
-
-// Users
-export const usersAPI = {
-  getAll: () => apiRequest<User[]>('GET', '/users'),
-  getById: (id: string) => apiRequest<User>('GET', `/users/${id}`),
-  create: (user: Omit<User, 'id' | 'createdAt' | 'lastLogin'>) => apiRequest<User>('POST', '/users', user),
-  update: (id: string, user: Partial<User>) => apiRequest<User>('PATCH', `/users/${id}`, user),
-  delete: (id: string) => apiRequest('DELETE', `/users/${id}`),
-  updateStatus: (id: string, status: User['status']) => apiRequest<User>('PATCH', `/users/${id}/status`, { status }),
-};
-
-// Dashboard
-export const dashboardAPI = {
-  getStats: () => apiRequest('GET', '/dashboard/stats'),
 };
 
 export default api; 

@@ -46,7 +46,7 @@ export const DeleteSectionModal = ({ open, fetchData, onOpenChange, data }: Conf
           <AlertDialogDescription>Siz haqiqatdan ham <b>{data.name}</b> bo'limini o'chirishni xohlaysizmi?</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter className="flex justify-end space-x-2">
-          <Button variant="outline" disabled={isLoading} className='mr-3' onClick={handleClose}>Bekor qilish</Button>
+          <Button variant="yellow" disabled={isLoading} className='mr-3' onClick={handleClose}>Oynani yopish</Button>
           <Button variant="destructive" disabled={isLoading} className='ml-3' onClick={onConfirm}>O'chirish</Button>
         </AlertDialogFooter>
       </AlertDialogContent>

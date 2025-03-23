@@ -31,7 +31,7 @@ export default function Positions() {
       const response = await positionsAPI.getAll();
       if (response.status) {
         setData(response.resoult);
-        toast({ title: "Muvaffaqiyatli yuklandi", description: "Bo'limlar ro'yxati yangilandi" });
+        toast({ title: "Muvaffaqiyatli yuklandi", description: "Lavozimlar ro'yxati yangilandi" });
       }else {
         throw new Error(response.error.message)
       }
@@ -88,9 +88,9 @@ export default function Positions() {
       {/* **LAYOUT** */}
       <div className="space-y-4 min-w-[360px]">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <Button onClick={handleGoBack} className="w-full sm:w-auto"> <ChevronLeft className="mr-2 h-4 w-4" /> Ortga </Button>
+          <Button onClick={handleGoBack} variant={"primary"} className="w-full sm:w-auto"> <ChevronLeft className="mr-2 h-4 w-4" /> Ortga </Button>
           <h2 className="text-2xl font-bold"> Lavozimlar ro'yxati </h2>
-          <Button onClick={handleAddModal} type="button" className="w-full sm:w-auto"> <Plus className="mr-2 h-4 w-4" /> Lavozim qo'shish </Button>
+          <Button onClick={handleAddModal} type="button" variant={"primary"} className="w-full sm:w-auto"> <Plus className="mr-2 h-4 w-4" /> Lavozim qo'shish </Button>
         </div>
 
         {/* **TABLE** */}
@@ -124,8 +124,8 @@ export default function Positions() {
                     <td className="p-2 border border-gray-300"> {item.responsible_worker} </td>
                     <td className="p-2 border border-gray-300">
                       <div className="flex justify-center">
-                        <Button type="button" onClick={() => handleEdit(item)} className="w-12 h-full mr-2"> <PenLine /> </Button>
-                        <Button type="button" onClick={() => handleDelete(item)} className="w-12 h-full ml-2"> <Trash2 /> </Button>
+                        <Button type="button" onClick={() => handleEdit(item)} className="w-12 h-full mr-2 bg-green-500 text-white hover:bg-green-600"> <PenLine /> </Button>
+                        <Button type="button" onClick={() => handleDelete(item)} variant={"destructive"} className="w-12 h-full ml-2"> <Trash2 /> </Button>
                       </div>
                     </td>
                   </tr>

@@ -1,4 +1,3 @@
-// import { ResponseType } from "./../types/types";
 import { apiRequest } from "./api";
 import { ResponseType, TWorkers } from "@/types/types";
 
@@ -15,11 +14,12 @@ export type ResponseUploadFileType<T> = Omit<ResponseType<T>, "resoult"> & {
 
 export const workersAPI = {
     getAll: (params: GetWorkers) => apiRequest<ResponseType<TWorkers>>('GET', `/workers?page=${params.page_number}`, params.filters ),
+    postAll: (params: GetWorkers) => apiRequest<ResponseType<TWorkers>>('POST', `/workers?page=${params.page_number}`, params.filters ),
     uploadImage: (formData: FormData) => apiRequest<ResponseUploadFileType<string>>("POST", `/worker-image-store`, formData, {"Content-Type": "multipart/form-data"}),
-    //! deleteImage: (file: File) => apiRequest<ResponseUploadFileType /> // deletni kiyinroq qilamiz dedi johon aka
+    deleteImage:(file_path: string) => apiRequest<{resoult: string, status: boolean, error: { message: any }}>('DELETE', '/worker-image-delete', {file_path}),
     create: (data: TWorkers) => apiRequest<{resoult: TWorkers, status: boolean, error: { message: any }}>('POST', '/worker', data),
-    getById: (id: string) => apiRequest<TWorkers>('GET', `/worker/${id}`),
-    update: (id: string, employee: Partial<TWorkers>) => apiRequest<TWorkers>('PATCH', `/worker/${id}`, employee),
-    delete: (id: string) => apiRequest('DELETE', `/worker/${id}`),
+    update: (data: TWorkers) => apiRequest<{resoult: TWorkers, status: boolean, error: { message: any }}>('PUT', `/worker/${data.id}`, data),
+    getById: (id: number) => apiRequest<{resoult: TWorkers, status: boolean, error: { message: any }}>('GET', `/worker/${id}`),
+    delete: (id: number) => apiRequest<{resoult: TWorkers, status: boolean, error: { message: any }}>('DELETE', `/worker-delete/${id}`),
   };
   

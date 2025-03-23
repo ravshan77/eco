@@ -71,10 +71,10 @@ const TasksToEmployee = () => {
       {isActionLoading && <LoadingOverlay />}
       <div className="space-y-4 min-w-[360px]">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <Button onClick={handleGoBack} className="w-full sm:w-auto">
+          <Button onClick={handleGoBack} variant={"primary"} className="w-full sm:w-auto">
             <ChevronLeft className="mr-2 h-4 w-4" /> Ortga </Button>
           <h2 className="text-2xl font-bold">{name}ning ish stoli</h2>
-          <Button onClick={handleToggleAddModal} className="w-full sm:w-auto">
+          <Button onClick={handleToggleAddModal} variant={"primary"} className="w-full sm:w-auto">
             <Plus className="mr-2 h-4 w-4" /> Yangi topshiriq
           </Button>
         </div>

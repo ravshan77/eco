@@ -1,4 +1,4 @@
-import { ChevronDown, Home, Inbox, Search, Settings, Users, LucideIcon } from "lucide-react"
+import { ChevronDown, Home, Inbox, Search, Settings, Users, LucideIcon, BookText } from "lucide-react"
 import { useLocation, useNavigate } from "react-router-dom"
 import { useSidebar } from "@/components/ui/sidebar"
 import { cn } from "@/lib/utils"
@@ -27,7 +27,7 @@ const items: MenuItem[] = [
   },
   {
     title: "Ma'lumotlar",
-    icon: Inbox,
+    icon: BookText,
     submenuKey: "information",
     submenu: [
       {
@@ -38,14 +38,10 @@ const items: MenuItem[] = [
         title: "Lavozimlar",
         url: "/informations/positions",
       },
-      // {
-      //   title: "Bajarilayotgan",
-      //   url: "/tasks/in-progress",
-      // },
-      // {
-      //   title: "Bajarilgan",
-      //   url: "/tasks/completed",
-      // },
+      {
+        title: "Topshiriq kategoriyalari",
+        url: "/informations/assigment-category",
+      },
     ],
   },
   {
@@ -57,18 +53,6 @@ const items: MenuItem[] = [
         title: "Xodimlarga topshiriq berish",
         url: "/tasks",
       },
-      {
-        title: "Yangi topshiriqlar",
-        url: "/tasks  ",
-      },
-      {
-        title: "Bajarilayotgan",
-        url: "/tasks/in-progress",
-      },
-      {
-        title: "Bajarilgan",
-        url: "/tasks/completed",
-      },
     ],
   },
   {
@@ -79,6 +63,10 @@ const items: MenuItem[] = [
       {
         title: "Barcha xodimlar",
         url: "/workers",
+      },
+      {
+        title: "Xodimlar buyruqlari",
+        url: "/workers-orders",
       },
     ],
   },
@@ -96,7 +84,7 @@ const items: MenuItem[] = [
 
 export function AppSidebar() {
   const { isOpen, toggle } = useSidebar()
-  const [openSubmenus, setOpenSubmenus] = useState<Set<string>>(new Set(['tasks', 'workers']))
+  const [openSubmenus, setOpenSubmenus] = useState<Set<string>>(new Set(['tasks', 'workers', 'information']))
   const location = useLocation()
   const navigate = useNavigate()
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024)
