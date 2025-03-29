@@ -145,7 +145,7 @@ export type TTask = {
   assigment_category_id: number;
   assigment_category_name?: string;
   assigment: string;
-  file?: Array<string>;
+  file?: Array<string> | null;
   period_to: string;
   period_from: string;
   preority: number;

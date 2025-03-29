@@ -27,11 +27,11 @@ export const TASK_CONFIRM_STATUS_INFO = {
     text:"Jarayonda",
   },
   tasdiqlangan: {
-    color:"bg-blue-100 p-1 font-medium text-blue-700",
+    color:"bg-green-100 p-1 font-medium text-green-700",
     text:"Tasdiqlangan",
   },
   bajarilgan: {
-    color:"bg-green-100 p-1 font-medium text-green-700",
+    color:"bg-blue-100 p-1 font-medium text-blue-700",
     text:"Bajarilgan",
   },
 }

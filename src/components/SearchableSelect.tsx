@@ -22,7 +22,7 @@ export default function SearchableSelect({ setValue, watch, formField}: Props) {
   const [data, setData] = useState<{ id: number; name: string }[]>([]);
 
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   const worker_id = String(watch("worker_id"))
@@ -56,7 +56,7 @@ export default function SearchableSelect({ setValue, watch, formField}: Props) {
     setLoading(true);
 
     try {
-      const response = await workersAPI.postAll({filters: {search}, page_number:page});
+      const response = await workersAPI.getAll({filters: {search}, page_number:page});
       if (response.status) {
         const result = response.resoult;
         

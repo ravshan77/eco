@@ -20,13 +20,13 @@ import { taskCategoryApi } from "@/services/taskCategory.service";
 
 const taskSchema = z.object({
   id: z.number(),
-  ball: z.string().min(0, "Eng kamida 0 ball berish kerak ").max(100, "Eng ko'pi bilan 100 ball berish mumkin"),
   worker_id: z.number(),
   period_to: z.string(),
   period_from: z.string(),
   preority: z.coerce.number(),
   assigment_category_id: z.coerce.number(),
-  file: z.array(z.string()).optional(), 
+  file: z.array(z.string()).nullable().optional(), 
+  ball: z.string().min(0, "Eng kamida 0 ball berish kerak ").max(100, "Eng ko'pi bilan 100 ball berish mumkin"),
   assigment: z.string().min(3, "Topshiriq kamida 3 ta harfdan iborat bo'lishi kerak"),
 });
   
@@ -125,6 +125,9 @@ export default function EditTask() {
       setLoading(false);
     }
   };
+
+  console.log(errors);
+  
 
   return (
     <>

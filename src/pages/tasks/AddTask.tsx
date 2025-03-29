@@ -175,7 +175,11 @@ export default function AddTask() {
 
               <div className="space-y-2 w-32">
                 <Label>Ball (0-100)*</Label>
-                <Input type="number" {...form.register('ball')} value={watch("ball")} onChange={e => setValue("ball", e.target.value)} min={0} max={100} required className={errors.ball ? 'border-red-500' : ''} />
+                <Input type="number" {...form.register('ball')} value={watch("ball")} min={0} max={100} required className={errors.ball ? 'border-red-500' : ''} onChange={e => {
+                  const value = Number(e.target?.value);    
+                  if (value < 0 || value > 100) return;
+                  setValue("ball", e.target?.value)
+                }} />
                 {errors.ball && (<p className="text-sm text-red-500"> {errors.ball.message} </p> )}
               </div>
 

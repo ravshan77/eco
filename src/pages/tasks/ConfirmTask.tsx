@@ -31,7 +31,7 @@ export default function ConfirmTask() {
   const [loading, setLoading] = useState(true)
   const [data, setData] = useState<TTask | null>(null)
 
-  const form = useForm<TConfirmTask>({ resolver: zodResolver(confirmTaskSchema), disabled: loading });
+  const form = useForm<TConfirmTask>({ resolver: zodResolver(confirmTaskSchema), disabled: loading, defaultValues: {fine: "0"} });
   const { setValue, formState: { errors }, handleSubmit, watch, reset } = form;
 
   const confirm_status = Number(data?.confirmation_status)  
@@ -45,11 +45,9 @@ export default function ConfirmTask() {
         if (response.status) {
           setData(response.resoult)
           if (response.resoult?.assigment_confirmation?.id) {
-            console.log("reset(response.resoult?.assigment_confirmation)")
             reset(response.resoult?.assigment_confirmation) 
           } else{
             setValue("assigment_id", Number(response.resoult?.id))
-            console.log("setValue(assigment_id, Number(response.resoult?.id))")
           }
           toast({title: "Muvaffaqiyatli yuklandi", description: "Ma'lumotlar yuklandi"});
         }
@@ -189,12 +187,39 @@ export default function ConfirmTask() {
               {errors.description && (<p className="text-sm text-red-500"> {errors.description.message} </p>)}
             </div>
 
-            <div className="space-y-2 w-32">
-              <Label>Jarima bali (0-100)*</Label>
-              <Input name="fine" type="number" value={watch("fine")} min={0} max={100} readOnly={loading || disabled_status} required placeholder="Jarima bali ..." onChange={e => setValue("fine", e.target.value)} className={errors.fine ? 'border-red-500' : ''} />
-              {errors.fine && (<p className="text-sm text-red-500"> {errors.fine.message} </p>)}
-            </div>
+            <div className="flex gap-4">
+              <div className="space-y-2 w-24">
+                <Label>Topshiriq balli</Label>
+                <Input value={data?.ball} type="number" readOnly className="border-yellow-400"/>
+              </div>
 
+              <div className="space-y-2 flex flex-col justify-around">
+                <>&nbsp;</>
+                <span>-</span>
+              </div>
+   
+              <div className="space-y-2 w-32">
+                <Label>Jarima bali (0-{data?.ball}) *</Label>
+                <Input name="fine" type="number" value={watch("fine")} min={0} max={Number(data?.ball) ?? 100} readOnly={loading || disabled_status} required placeholder="Jarima bali" onChange={e => {
+                  const value = Number(e.target?.value);    
+                  if (value < 0 || value > Number(data?.ball)) return;
+                  setValue("fine", e.target?.value)
+                }} className={'border-red-500'} />
+                {errors.fine && (<p className="text-sm text-red-500"> {errors.fine.message} </p>)}
+              </div>
+
+              <div className="space-y-2 flex flex-col justify-around">
+                <>&nbsp;</>
+                <span>=</span>
+              </div>
+
+              <div className="space-y-2 w-[100px]">
+                <Label>Beriladigan ball </Label>
+                <Input value={Number(data?.ball) - Number(watch("fine"))} readOnly className="border-green-500" />
+              </div>
+
+
+            </div>
             {!disabled_status ? <div className="flex justify-center space-x-2">
                <Button type="submit" className='m-3' variant={"green"} disabled={loading}> Tasdiqlash </Button> 
             </div> : null}

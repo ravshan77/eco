@@ -39,7 +39,7 @@ export default function Tasks() {
   const fetchWorkers = async ({ filters, page_number } : GetWorkers) => {
     setIsLoading(true);
     try {
-      const response = await workersAPI.postAll({filters, page_number});
+      const response = await workersAPI.getAll({filters, page_number});
       if(response.status){
         setData(response.resoult.data);
         setMeta(response.resoult.meta);

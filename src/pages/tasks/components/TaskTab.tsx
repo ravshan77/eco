@@ -7,13 +7,13 @@ import { Input } from '../../../components/ui/input';
 import { Pagination } from '@/components/pagination';
 import { toast } from '../../../components/ui/use-toast';
 import { useState, useEffect, ChangeEvent } from 'react';
-import { Eye, PenLine, Settings2, Trash2 } from 'lucide-react';
 import { getDateDifference } from '@/utils/getDateDifference';
 import { GetTasks, tasksApi } from '@/services/tasks.service';
+import { Eye, PenLine, Settings2, Trash2 } from 'lucide-react';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { DEFAULT_META_DATA, MONTHS, TASK_CONFIRM_STATUS_INFO, TASK_PREORIIY_STATUS_INFO, YEARS } from '@/constants';
 import { PaginationMeta, TaskConfirmStatusEnum, TaskPreoriyStatusEnum, TTask, TTaskCategory } from '../../../types/types';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 type Props = {
   worker_id: number;
@@ -36,7 +36,7 @@ const TaskTab = ({ assigment_category, worker_id }:Props) => {
   const fetchData = async ({ filters, page_number } : GetTasks) => {
     try {
       setLoading(true);
-      const response = await tasksApi.postAll({page_number, filters});
+      const response = await tasksApi.getAll({page_number, filters});
       setData(response.resoult.data);
       setMeta(response.resoult.meta);
       toast({ title: "Muvaffaqiyatli yuklandi", description: "Topshiriqlar ro'yxati yangilandi" });

@@ -13,7 +13,7 @@ export type ResponseUploadFileType<T> = Omit<ResponseType<T>, "resoult"> & {
 
 
 export const workersAPI = {
-    postAll: (params: GetWorkers) => apiRequest<ResponseType<TWorkers>>('POST', `/workers?page=${params.page_number}`, params.filters ),
+    getAll: (params: GetWorkers) => apiRequest<ResponseType<TWorkers>>('POST', `/workers?page=${params.page_number}`, params.filters ),
     uploadImage: (formData: FormData) => apiRequest<ResponseUploadFileType<string>>("POST", `/worker-image-store`, formData, {"Content-Type": "multipart/form-data"}),
     deleteImage:(file_path: string) => apiRequest<{resoult: string, status: boolean, error: { message: any }}>('DELETE', '/worker-image-delete', {file_path}),
     create: (data: TWorkers) => apiRequest<{resoult: TWorkers, status: boolean, error: { message: any }}>('POST', '/worker', data),

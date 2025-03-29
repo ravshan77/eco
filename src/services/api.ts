@@ -5,11 +5,11 @@ import { toast } from '../components/ui/use-toast';
 // export const base = "https://ecouzkpi-main-9umb8r.laravel.cloud"
 // export const baseUrl = `${base}/api`
 
-export const base = "http://192.168.137.238:1010"
-export const baseUrl = `${base}/api`
-
-// export const base = "http://10.100.104.111:1010"
+// export const base = "http://192.168.137.238:1010"
 // export const baseUrl = `${base}/api`
+
+export const base = "http://10.100.104.111:1010"
+export const baseUrl = `${base}/api`
 
 // export const base = "http://172.20.10.3:1010"
 // export const baseUrl = `${base}/api`
