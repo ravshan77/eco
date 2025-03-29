@@ -11,9 +11,9 @@ import { formatPhoneNumber } from '@/utils/formatPhoneNumber';
 import { LoadingOverlay } from '@/components/ui/loading-overlay';
 import { DeleteWorkerModal } from './components/DeleteWorkerModal';
 import { GetWorkers, workersAPI } from '@/services/workers.service';
-import { ChevronLeft, PenLine, Plus, Settings, Trash2 } from 'lucide-react';
-import { PaginationMeta, TWorkers, WorkerOrdersStatusEnum } from '@/types/types';
-import { DEFAULT_META_DATA, MONTHS, StatusInfo, WORKER_STATUS_INFO, YEARS } from '@/constants';
+import { ChevronLeft, PenLine, Plus, Settings2, Trash2 } from 'lucide-react';
+import { DEFAULT_META_DATA, MONTHS, WORKER_STATUS_INFO, YEARS } from '@/constants';
+import { PaginationMeta, StatusInfo, TWorkers, WorkerOrdersStatusEnum } from '@/types/types';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 
@@ -58,12 +58,12 @@ export default function Workers() {
 
   const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
     setFiltersQuery( prev =>  ({ ...prev, [e.target.name] : e.target.value}));
-    fetchWorkers({ filters: { search: e.target.value }, page_number: 1})
+    fetchWorkers({ filters: { ...filtersQuery, search: e.target.value }, page_number: 1})
   };
 
   const handleGoBack = () => navigate(-1)
-  const handleGoEdit = (id:string) => navigate(`/workers/edit-worker/${id}`)
   const handleDelete = (item: TWorkers) => setOpenDeleteModal(item);
+  const handleGoEdit = (id:string) => navigate(`/workers/edit-worker/${id}`)
 
   const getWorkerOrdersStatus = (status: TWorkers["status"]): StatusInfo => {
     switch (status) {
@@ -127,22 +127,22 @@ export default function Workers() {
             <table className="w-full min-w-[640px] border-separate border-spacing-0">
               {/* TEPADAGI HEADER QISMI */}
               <thead className="bg-white dark:bg-black sticky top-0 z-20 shadow-md border-b-2 border-gray-400">
-                <tr className="border-b h-12 border-gray-300">
-                  <th className="p-2 text-left w-8 border border-gray-300">№</th>
-                  <th className="p-2 text-left w-8 border border-gray-300">Rasmi</th>
-                  <th className="p-2 text-left border border-gray-300">F.I.O</th>
-                  <th className="p-2 text-left border border-gray-300">Lavozim</th>
-                  <th className="p-2 text-left w-48 border border-gray-300">Status</th>
-                  <th className="p-2 text-left w-36 border border-gray-300">Tel 1</th>
-                  <th className="p-2 text-left w-36 border border-gray-300">Ish telefoni</th>
-                  <th className="p-2 text-center w-8 border border-gray-300"> <div className='flex justify-center'><Settings /></div></th>
+                <tr className="border-b h-12 border-gray-300 bg-muted/50">
+                  <th className="p-2 text-center w-8 border border-gray-300">№</th>
+                  <th className="p-2 text-center w-8 border border-gray-300">Rasmi</th>
+                  <th className="p-2 text-center border border-gray-300">F.I.O</th>
+                  <th className="p-2 text-center border border-gray-300">Lavozim</th>
+                  <th className="p-2 text-center w-48 border border-gray-300">Status</th>
+                  <th className="p-2 text-center w-36 border border-gray-300">Tel 1</th>
+                  <th className="p-2 text-center w-36 border border-gray-300">Ish telefoni</th>
+                  <th className="p-2 text-center w-8 border border-gray-300"> <div className='flex justify-center'><Settings2 /></div></th>
                 </tr>
               </thead>
 
               {/* BODY QISMI */}
               <tbody className="cursor-pointer">
                 {data?.map((wkr, ind) => (
-                  <tr key={wkr.id} className="border-b border-gray-300">
+                  <tr key={wkr.id} onDoubleClick={() => handleGoEdit(String(wkr.id))} className="border-b border-gray-300">
                     <td className="p-1 border border-gray-300"> {ind + meta?.from} </td>
                     <td className="p-1 border border-gray-300 flex justify-center items-center"> 
                       <PhotoProvider>
@@ -172,9 +172,9 @@ export default function Workers() {
             </table>
           </div>
 
-          <div className="mt-4 flex items-center justify-between gap-4">
-            <div> <Pagination fetchPage={fetchWorkers} current_page={current_page} meta={meta} total_pages={total_pages} filtersQuery={filtersQuery} /> </div>
+          <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="text-sm text-muted-foreground order-2 sm:order-1"> Jami {total_pages} xodim </div>
+            <div> <Pagination fetchPage={fetchWorkers} current_page={current_page} meta={meta} total_pages={total_pages} filtersQuery={filtersQuery} /> </div>
           </div>
         </Card>
       </div>

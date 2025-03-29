@@ -9,7 +9,7 @@ import AddSectionModal from './components/AddSectionModal';
 import EditSectionModal from './components/EditSectionModal';
 import { LoadingOverlay } from '@/components/ui/loading-overlay';
 import { DeleteSectionModal } from './components/DeleteSectionModal';
-import { ChevronLeft, PenLine, Plus, Settings, Trash2 } from 'lucide-react';
+import { ChevronLeft, PenLine, Plus, Settings2, Trash2 } from 'lucide-react';
 
 export default function Sections() {
   // **STATES**
@@ -74,13 +74,13 @@ export default function Sections() {
               {/* THEADER */}
               <thead className="bg-white dark:bg-black sticky top-0 z-20 shadow-md border-b-2 border-gray-400">
                 <tr className="border-b h-12 border-gray-300">
-                  <th className="p-2 text-left w-8 border border-gray-300">№</th>
-                  <th className="p-2 text-left w-8 border border-gray-300">Sana</th>
-                  <th className="p-2 text-left border border-gray-300">Bo'lim nomi</th>
-                  <th className="p-2 text-left border border-gray-300">Ma'sul xodim</th>
+                  <th className="p-2 text-center w-8 border border-gray-300">№</th>
+                  <th className="p-2 text-center w-8 border border-gray-300">Sana</th>
+                  <th className="p-2 text-center border border-gray-300">Bo'lim nomi</th>
+                  <th className="p-2 text-center border border-gray-300">Ma'sul xodim</th>
                   <th className="p-2 text-center w-8 border border-gray-300">
                     <div className="flex justify-center">
-                      <Settings />
+                      <Settings2 />
                     </div>
                   </th>
                 </tr>

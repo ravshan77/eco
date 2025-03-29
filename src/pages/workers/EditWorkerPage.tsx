@@ -11,6 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { statesAPI } from "@/services/states.service";
 import { SingleOption, TWorkers } from "@/types/types";
 import { regionsAPI } from "@/services/regions.service";
+import { DeleteWorkerModal } from "./components/DeleteWorkerModal";
 import { workersAPI } from "@/services/workers.service";
 import { useNavigate, useParams } from "react-router-dom";
 import { sectionsAPI } from "@/services/sections.service";
@@ -19,7 +20,6 @@ import { PhotoProvider, PhotoView } from "react-photo-view";
 import { formatPhoneNumber } from "@/utils/formatPhoneNumber";
 import { EDUCATION_STATUS, WORKER_STATUS } from "@/constants";
 import { LoadingOverlay } from "@/components/ui/loading-overlay";
-import { DeleteWorkerModal } from "./components/DeleteWorkerModal";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
@@ -48,7 +48,7 @@ export default function EditWorkerPage() {
   const [options, setOptions] = useState<{ states: SingleOption[], regions:SingleOption[], positions: SingleOption[], sections: SingleOption[], EDUCATION_STATUS: SingleOption[], WORKER_STATUS: SingleOption[] }>({ states: [], regions: [], positions:[], sections:[], WORKER_STATUS, EDUCATION_STATUS })
 
   const navigate = useNavigate();
-  const { id } = useParams();
+  const { worker_id } = useParams();
 
   const form = useForm<TWorkers>({ resolver: zodResolver(workerSchema), disabled: loading, shouldUnregister: false });
   const { control, setValue, formState: { errors }, handleSubmit, watch, reset, getValues} = form;
@@ -59,12 +59,10 @@ export default function EditWorkerPage() {
 
   // get worker data
   useEffect(() => {
-    let isMounted = true;
-
     setLoading(true);
     const fetchWorkers = async () => {
       try {
-        const workerRes = await workersAPI.getById(Number(id));
+        const workerRes = await workersAPI.getById(Number(worker_id));
         if (!workerRes.status) throw new Error();
           const [statesRes, regionsRes, sectionsRes, positionsRes] = await Promise.all([
             statesAPI.getAll(), 
@@ -89,11 +87,7 @@ export default function EditWorkerPage() {
     };
     fetchWorkers()
 
-    return () => {
-      isMounted = false;
-    };
-  
-  },[id])
+  },[worker_id])
 
   const onSubmit = async (data: TWorkers) => { 
     setLoading(true);
@@ -135,7 +129,7 @@ export default function EditWorkerPage() {
   };
 
   const handleImageDelete = async (file_path:string) => {
-    if (!image_path) return;
+    if (!file_path) return;
     setLoading(true);
     try {
       const response = await workersAPI.deleteImage(file_path);
@@ -432,7 +426,7 @@ export default function EditWorkerPage() {
                     <div className="mt-4 relative">
                       <PhotoProvider>
                         <PhotoView src={`${base + image_path}`}>
-                          <img src={`${base + image_path}`} alt="Xodim rasmi" className="w-full h-72 object-cover rounded-md"/>
+                          <img src={`${base + image_path}`} alt="Xodim rasmi" className="w-full h-72 object-cover border rounded-md"/>
                         </PhotoView>
                       </PhotoProvider>
                       <Button variant="destructive" type="button" className="mt-2 absolute bottom-1 right-1 cursor-pointer" onClick={() => handleImageDelete(image_path)} disabled={loading}>

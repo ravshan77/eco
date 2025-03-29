@@ -9,15 +9,18 @@ import Tasks from './pages/tasks/Tasks';
 import Settings from './pages/Settings';
 import Search from './pages/Search';
 import Login from './pages/Login';
-import './styles/globals.css';
 import NotFound from './pages/NotFound';
-import TasksToEmployee from './pages/tasks/TasksToEmployee';
+import WorkerTasks from './pages/tasks/WorkerTasks';
 import AddWorkerPage from './pages/workers/AddWorkerPage';
 import EditWorkerPage from './pages/workers/EditWorkerPage';
 import Sections from './pages/sections/Sections';
 import Positions from './pages/positions/Positions';
 import WorkersOrders from './pages/workersOrders/WorkersOrders';
-import AssigmentCategory from './pages/assigmentCategory/AssigmentCategory';
+import TaskCategory from './pages/taskCategory/TaskCategory';
+import CompleteTask from './pages/tasks/CompleteTask';
+import AddTask from './pages/tasks/AddTask';
+import EditTask from './pages/tasks/EditTask';
+import ConfirmTask from './pages/tasks/ConfirmTask';
 
 function App() {
   return (
@@ -32,14 +35,18 @@ function App() {
               <Route path="workers" element={<Workers />} />
               <Route path="informations/sections" element={<Sections />} />
               <Route path="informations/positions" element={<Positions />} />
-              <Route path="informations/assigment-category" element={<AssigmentCategory />} />
+              <Route path="informations/assigment-category" element={<TaskCategory />} />
               <Route path="workers/add-new-worker" element={<AddWorkerPage />} />
-              <Route path="workers/edit-worker/:id" element={<EditWorkerPage />} />
+              <Route path="workers/edit-worker/:worker_id" element={<EditWorkerPage />} />
               <Route path="workers-orders" element={<WorkersOrders />} />
               <Route path="tasks" element={<Tasks />} />
+              <Route path="tasks/add-task/:worker_id/:assigment_category_id" element={<AddTask />} />
+              <Route path="tasks/edit-task/:assigment_id" element={<EditTask />} />
               <Route path="search" element={<Search />} />
               <Route path="settings" element={<Settings />} />
-              <Route path="tasks-to-employee/:name/:id" element={<TasksToEmployee />} />
+              <Route path="tasks-to-employee/:worker_id" element={<WorkerTasks />} />
+              <Route path="complete-task/:assigment_id" element={<CompleteTask />} />
+              <Route path="confirm-task/:assigment_id" element={<ConfirmTask />} />
             </Route>
           </Routes>
         </Router>

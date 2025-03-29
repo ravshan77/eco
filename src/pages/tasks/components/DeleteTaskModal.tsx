@@ -1,41 +1,33 @@
-import { useState } from "react";
-import { TWorkers } from "@/types/types";
-import { useNavigate } from "react-router-dom";
+import { memo, useState } from "react";
+import { TTask } from "@/types/types";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
-import { DEFAULT_WORKER_VALUES } from "@/constants";
-import { GetWorkers, workersAPI } from "@/services/workers.service";
+import { GetTasks, tasksApi } from "@/services/tasks.service";
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter } from "@/components/ui/alert-dialog";
 
 interface ConfirmProps {
   open: boolean;
-  data: TWorkers;
-  filtersQuery?: any;
-  onOpenChange: (open: TWorkers) => void;
-  fetchData?: (params: GetWorkers) => Promise<void>;
+  data: TTask | null;
+  fetchData: (params: GetTasks) => Promise<void>,
+  onOpenChange: (open: TTask | null) => void;
+  filtersQuery: any;
 }
 
-export const DeleteWorkerModal = ({ open, fetchData, onOpenChange, data, filtersQuery }: ConfirmProps) => {
+export const DeleteTaskModal = memo(({ open, fetchData, onOpenChange, data, filtersQuery }: ConfirmProps) => {
   const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
 
-  const handleClose = () => onOpenChange(DEFAULT_WORKER_VALUES)
+  const handleClose = () => onOpenChange(null)
 
   const onConfirm = async () => {
-    if (!data.id) {
+    if (!data?.id) {
       return  
     }
     try {
       setIsLoading(true);
-      const response = await workersAPI.delete(data?.id);
+      const response = await tasksApi.delete(data?.id);
       if (response.status) {
-        if (fetchData) {
-            fetchData({filters:filtersQuery, page_number: 1})
-        } else{
-          navigate(-1)
-        }
-
-        toast({ title: "Muvaffaqiyatli", description: "Xodim o'chirildi" });
+        toast({ title: "Muvaffaqiyatli", description: "Topshiriq o'chirildi" });
+        fetchData({ filters: filtersQuery, page_number: 1})
         handleClose()
       }else {
         throw new Error(response.error.message)
@@ -52,7 +44,7 @@ export const DeleteWorkerModal = ({ open, fetchData, onOpenChange, data, filters
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Tasdiqlash</AlertDialogTitle>
-          <AlertDialogDescription>Siz haqiqatdan ham <b>{data.name}</b> xodimni o'chirishni xohlaysizmi?</AlertDialogDescription>
+          <AlertDialogDescription>Siz haqiqatdan ham "<b>{data?.assigment}</b>" topshiriqni o'chirishni xohlaysizmi?</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter className="flex justify-end space-x-2">
           <Button variant="yellow" disabled={isLoading} className='mr-3' onClick={handleClose}>Oynani yopish</Button>
@@ -61,4 +53,4 @@ export const DeleteWorkerModal = ({ open, fetchData, onOpenChange, data, filters
       </AlertDialogContent>
     </AlertDialog>
   );
-};
+});

@@ -7,15 +7,15 @@ import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { LoadingOverlay } from '@/components/ui/loading-overlay';
-import { assigmenCategorytAPI } from '@/services/assigmentCategory.service';
+import { taskCategoryApi } from '@/services/taskCategory.service';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
-const positionSchema = z.object({
+const taskCategorySchema = z.object({
   description: z.string().optional(),
   name: z.string().min(2, "Bo'lim nomi 2 ta harfdan ko'p bo'lishi kerak"),
 });
 
-type FormData = z.infer<typeof positionSchema>;
+type FormData = z.infer<typeof taskCategorySchema>;
 
 interface Props {
   open: boolean;
@@ -23,16 +23,16 @@ interface Props {
   onOpenChange: (open: boolean) => void;
 }
 
-export const AddAssigmentCategoryModal = memo(({ open, onOpenChange, fetchData }: Props) => {
+export const AddTaskCategoryModal = memo(({ open, onOpenChange, fetchData }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const form = useForm<FormData>({ resolver: zodResolver(positionSchema) });
+  const form = useForm<FormData>({ resolver: zodResolver(taskCategorySchema) });
   const { handleSubmit, register, formState } = form
 
   const onSubmit = async (data: FormData) => {
     setIsLoading(true);
     try {
-      const response = await assigmenCategorytAPI.create(data);
+      const response = await taskCategoryApi.create(data);
       if (response.status) {
         toast({ title: "Muvaffaqiyatli", description: "Yangi topshiriq kategoriyasi qo'shildi" });
         fetchData()

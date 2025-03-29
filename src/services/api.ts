@@ -1,14 +1,17 @@
 import axios from 'axios';
+import { User } from '../types/types';
 import { toast } from '../components/ui/use-toast';
-import { User, Task } from '../types/types';
 
 // export const base = "https://ecouzkpi-main-9umb8r.laravel.cloud"
 // export const baseUrl = `${base}/api`
 
-export const base = "http://192.168.1.2:1010"
+export const base = "http://192.168.137.238:1010"
 export const baseUrl = `${base}/api`
 
 // export const base = "http://10.100.104.111:1010"
+// export const baseUrl = `${base}/api`
+
+// export const base = "http://172.20.10.3:1010"
 // export const baseUrl = `${base}/api`
 
 const api = axios.create({
@@ -71,16 +74,6 @@ export const apiRequest = async <T>(method: string, url: string, data?: any, hea
 export const authAPI = {
   login: (email: string, password: string) => apiRequest<{ user: User; token: string }>('POST', '/auth/login', { email, password }),
   logout: () => apiRequest('POST', '/auth/logout'),
-};
-
-// Tasks
-export const tasksAPI = {
-  getAll: () => apiRequest<Task[]>('GET', '/tasks'),
-  getById: (id: string) => apiRequest<Task>('GET', `/tasks/${id}`),
-  create: (task: Omit<Task, 'id'>) => apiRequest<Task>('POST', '/tasks', task),
-  update: (id: string, task: Partial<Task>) => apiRequest<Task>('PATCH', `/tasks/${id}`, task),
-  delete: (id: string) => apiRequest('DELETE', `/tasks/${id}`),
-  updateStatus: (id: string, status: Task['status']) => apiRequest<Task>('PATCH', `/tasks/${id}/status`, { status }),
 };
 
 export default api; 

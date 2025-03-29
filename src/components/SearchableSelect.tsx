@@ -1,7 +1,7 @@
-import axios from "axios";
-import { baseUrl } from "@/services/api";
 import { TWorkersOrders } from "@/types/types";
+import { toast } from '@/components/ui/use-toast';
 import { useState, useEffect, useRef } from "react";
+import { workersAPI } from "@/services/workers.service";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Select, SelectTrigger, SelectContent, SelectItem } from "@/components/ui/select";
 import { Control, ControllerRenderProps, FieldErrors, UseFormSetValue, UseFormWatch } from "react-hook-form";
@@ -15,11 +15,12 @@ type Props = {
 }
 
 export default function SearchableSelect({ setValue, watch, formField}: Props) {
-  const [data, setData] = useState<{ id: number; name: string }[]>([]);
-  const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [data, setData] = useState<{ id: number; name: string }[]>([]);
+
   const inputRef = useRef<HTMLInputElement | null>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -45,29 +46,33 @@ export default function SearchableSelect({ setValue, watch, formField}: Props) {
     };
   }, [search]);
 
-  // Data olish
   useEffect(() => {
     fetchData();
   }, [page, search]);
-
+  
+  // get worker data
   const fetchData = async () => {
     if (!hasMore || loading) return;
     setLoading(true);
 
     try {
-      const response = await axios.post(`${baseUrl}/workers?page=${page}`, { search });
-      const result = response.data.resoult;
-
-      setData((prev) => (page === 1 ? result.data : [...prev, ...result.data]));
-      setHasMore(result.meta.current_page < result.meta.last_page);
-    } catch (error) {
-      console.error("Xatolik:", error);
+      const response = await workersAPI.postAll({filters: {search}, page_number:page});
+      if (response.status) {
+        const result = response.resoult;
+        
+        setData((prev) => (page === 1 ? result.data.map(w => ({ id: Number(w?.id), name: w.name })) : [...prev, ...result.data.map(w => ({ id: Number(w?.id), name: w.name }))]));
+        setHasMore(result.meta.current_page < result.meta.last_page);
+      } else {
+        throw new Error(response.error.message)
+      }
+    } catch (err) {
+      toast({ variant: "destructive", title: "Xatolik yuz berdi", description: String(err) });
     } finally {
       setLoading(false);
     }
   };
 
-  // Scroll bo'lganda pagination ishlashi
+  // Scroll pagination
   const handleScroll = () => {
     if (!containerRef.current) return;
     const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
@@ -76,7 +81,7 @@ export default function SearchableSelect({ setValue, watch, formField}: Props) {
     }
   };
 
-  // Select ochilganda inputga focus berish
+  // Select opened input to focus
   const handleOpenChange = (isOpen: boolean) => {
     if (isOpen) {
       setTimeout(() => inputRef.current?.focus(), 50);
@@ -85,13 +90,9 @@ export default function SearchableSelect({ setValue, watch, formField}: Props) {
 
 
   return (
-    <Select
-      value={worker_id}
-      onOpenChange={handleOpenChange}
-      onValueChange={(value) => setValue(formField.name, Number(value)) }
-    >
+    <Select value={worker_id} onOpenChange={handleOpenChange} onValueChange={(value) => setValue(formField.name, Number(value)) }>
       <SelectTrigger className="w-full">
-        {worker_id ? data.find((item) => item.id.toString() === worker_id)?.name : "Tanlang"}
+        {worker_id ? data.find((item) => item?.id?.toString() === worker_id)?.name : "Tanlang"}
       </SelectTrigger>
       <SelectContent>
         <div className="px-2 py-1">

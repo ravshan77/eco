@@ -1,18 +1,18 @@
 import { memo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
-import { TAssigmentCategory } from "@/types/types";
-import { assigmenCategorytAPI } from "@/services/assigmentCategory.service";
+import { TTaskCategory } from "@/types/types";
+import { taskCategoryApi } from "@/services/taskCategory.service";
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter } from "@/components/ui/alert-dialog";
 
 interface ConfirmProps {
   open: boolean;
-  data: TAssigmentCategory;
+  data: TTaskCategory;
   fetchData: () => Promise<void>;
-  onOpenChange: (open: TAssigmentCategory) => void;
+  onOpenChange: (open: TTaskCategory) => void;
 }
 
-export const DeleteAssigmentCategoryModal = memo(({ open, fetchData, onOpenChange, data }: ConfirmProps) => {
+export const DeleteTaskCategoryModal = memo(({ open, fetchData, onOpenChange, data }: ConfirmProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleClose = () => onOpenChange({name:""})
@@ -23,7 +23,7 @@ export const DeleteAssigmentCategoryModal = memo(({ open, fetchData, onOpenChang
     }
     try {
       setIsLoading(true);
-      const response = await assigmenCategorytAPI.delete(data?.id);
+      const response = await taskCategoryApi.delete(data?.id);
       if (response.status) {
         toast({ title: "Muvaffaqiyatli", description: "Topshiriq kategoriyasi o'chirildi" });
         fetchData()

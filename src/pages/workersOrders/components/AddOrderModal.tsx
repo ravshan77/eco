@@ -3,10 +3,10 @@ import { useState } from 'react';
 import { WORKER_STATUS } from '@/constants';
 import { Input } from '@/components/ui/input';
 import { TWorkersOrders } from '@/types/types';
-import { Form, FormProvider, useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { FormProvider, useForm } from 'react-hook-form';
 import SearchableSelect from '@/components/SearchableSelect';
 import { LoadingOverlay } from '@/components/ui/loading-overlay';
 import { GetWorkersOrders, workersOrdersAPI } from '@/services/workersOrders.service';
@@ -15,13 +15,11 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/comp
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const orderSchema = z.object({
+  order_date: z.string(),
+  description: z.string().nullable().optional(),
   worker_id: z.number({required_error:"Xodim tanlang"}).min(1, "Xodim tanlang"),
   order_status: z.number({required_error:"Buyruq statusini tanlang"}).min(1, "Buyruq statusni tanlang"),
-  order_date: z.string(),
-  description: z.string().optional(),
 });
-
-// type FormData = z.infer<typeof orderSchema>;
 
 interface Props {
   open: boolean;
@@ -33,9 +31,8 @@ interface Props {
 const AddOrderModal = ({ open, onOpenChange, fetchData, filtersQuery={} }: Props) => {
   const [loading, setLoading] = useState(false);
 
-  const form = useForm<TWorkersOrders>({ resolver: zodResolver(orderSchema), disabled: loading, shouldUnregister: false });
-  const { control, setValue, formState: { errors }, handleSubmit, watch } = form;
- 
+  const form = useForm<TWorkersOrders>({ resolver: zodResolver(orderSchema), disabled: loading });
+  const { control, setValue, formState: { errors }, handleSubmit, watch, reset } = form;
 
   const onSubmit = async (data: TWorkersOrders) => { 
     setLoading(true);
@@ -43,6 +40,7 @@ const AddOrderModal = ({ open, onOpenChange, fetchData, filtersQuery={} }: Props
       const response = await workersOrdersAPI.create(data);
       if (response.status) {
         toast({ title: "Muvaffaqiyatli", description: "Yangi buyruq chiqarildi"});
+        reset({})
         fetchData({filters: { ...filtersQuery}, page_number: 1})
         onOpenChange(false)
         // navigate (`/workers/edit-worker/${response.resoult.id}`)
@@ -55,8 +53,6 @@ const AddOrderModal = ({ open, onOpenChange, fetchData, filtersQuery={} }: Props
       setLoading(false);
     }
   };
-
-  console.log(errors)
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange} modal={true}>

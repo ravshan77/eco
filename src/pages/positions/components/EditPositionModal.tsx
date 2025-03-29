@@ -56,8 +56,6 @@ export const EditPositionModal = memo(({ open, onOpenChange, fetchData, data, op
     }
   };  
 
-  console.log(formState.errors)
-
   return (
     <Dialog open={open.valueOf()} onOpenChange={handleClose} modal={true}>
       <DialogContent onInteractOutside={(e) => e.preventDefault()}>

@@ -1,4 +1,4 @@
-import { ChevronDown, Home, Inbox, Search, Settings, Users, LucideIcon, BookText } from "lucide-react"
+import { ChevronDown, Home, Inbox, Search, Settings, Users, LucideIcon, BookText, ReceiptText } from "lucide-react"
 import { useLocation, useNavigate } from "react-router-dom"
 import { useSidebar } from "@/components/ui/sidebar"
 import { cn } from "@/lib/utils"
@@ -50,7 +50,7 @@ const items: MenuItem[] = [
     submenuKey: "tasks",
     submenu: [
       {
-        title: "Xodimlarga topshiriq berish",
+        title: "Xodim topshiriqlari",
         url: "/tasks",
       },
     ],
@@ -71,9 +71,10 @@ const items: MenuItem[] = [
     ],
   },
   {
-    title: "Qidiruv",
-    url: "/search",
-    icon: Search,
+    title: "Hisobotlar",
+    icon: ReceiptText,
+    submenuKey: "reports",
+    submenu: [],
   },
   {
     title: "Sozlamalar",

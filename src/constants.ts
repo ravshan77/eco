@@ -1,41 +1,4 @@
-import { TWorkers } from "./types/types"
-
-export const MONTHS = [
-    { value: "1", label: "Yanvar" },
-    { value: "2", label: "Fevral" },
-    { value: "3", label: "Mart" },
-    { value: "4", label: "Aprel" },
-    { value: "5", label: "May" },
-    { value: "6", label: "Iyun" },
-    { value: "7", label: "Iyul" },
-    { value: "8", label: "Avgust" },
-    { value: "9", label: "Sentabr" },
-    { value: "10", label: "Oktabr" },
-    { value: "11", label: "Noyabr" },
-    { value: "12", label: "Dekabr" },
-  ]
-
- export const WORKER_STATUS = [ 
-    {id:"1", name:"Ish aoliyatida"}, 
-    {id:"2", name:"Ta'tilda"}, 
-    {id:"3", name:"Mehnat safari"}, 
-    {id:"4", name:"Ishdan bo'shatilingan"}, 
-  ]
-  
-export const EDUCATION_STATUS = [ 
-  { id:"maktab", name:"Maktab" }, 
-  { id:"kollej", name:"Kollej" },
-  { id:"texnikum", name:"Texnikum" },
-  { id:"bakalavr", name:"Bakalavr" }, 
-  { id:"magistr", name:"Magistr" }
-]
-
-export const currentYear = new Date().getFullYear()
-export const YEARS = Array.from({ length: 10 }, (_, i) => currentYear - i)
-export const ITEMS_PER_PAGE = 50;
-
-export type StatusInfo = { color: string, text: string}
-
+// STATUS INFO
 export const WORKER_STATUS_INFO = {
   buyrugi_chiqarilmagan:{
     color:"bg-red-300",
@@ -58,8 +21,79 @@ export const WORKER_STATUS_INFO = {
     text:"Ishdan bo'shagan",
   },
 }
+export const TASK_CONFIRM_STATUS_INFO = {
+  jarayonda:{
+    color:"bg-yellow-100 p-1 font-medium text-yellow-700",
+    text:"Jarayonda",
+  },
+  tasdiqlangan: {
+    color:"bg-blue-100 p-1 font-medium text-blue-700",
+    text:"Tasdiqlangan",
+  },
+  bajarilgan: {
+    color:"bg-green-100 p-1 font-medium text-green-700",
+    text:"Bajarilgan",
+  },
+}
+export const TASK_PREORIIY_STATUS_INFO = {
+  qilinishi_kerak:{
+    text:"Qilinishi kerak",
+    color:"bg-yellow-100 text-yellow-700",
+  },
+  muhim:{
+    text:"Muhim",
+    color:"bg-blue-100 text-blue-700",
+  },
+  zarur:{
+    text:"Zarur",
+    color:"bg-red-300",
+  },
+}
 
-export const workerDefaultValues: TWorkers = {
+// OPTIONS
+export const EDUCATION_STATUS = [ 
+  { id:"maktab", name:"Maktab" }, 
+  { id:"kollej", name:"Kollej" },
+  { id:"texnikum", name:"Texnikum" },
+  { id:"bakalavr", name:"Bakalavr" }, 
+  { id:"magistr", name:"Magistr" }
+]
+export const WORKER_STATUS = [ 
+  {id:"1", name:"Ishga qabul qilish"}, 
+  {id:"2", name:"Ta'tilga chiqarish"}, 
+  {id:"3", name:"Mehnat safariga yuborish"}, 
+  {id:"4", name:"Ishdan bo'shatish"}, 
+]
+export const TASK_CONFIRM_STATUS = [
+  { id: 0, name: "Jarayonda" },
+  { id: 1, name: "Bajarilgan" },
+  { id: 2, name: "Tasdiqlangan" },
+]
+export const TASK_PREORIIY_STATUS = [
+  { id: 1, name: "Qilinishi kerak" },
+  { id: 2, name: "Muhim" },
+  { id: 3, name: "Zarur" },
+]
+
+// DEAFULT CONSTANTA
+export const CURRENT_DAY = new Date().toISOString().split("T")[0]
+export const MONTHS = [
+  { value: "1", label: "Yanvar" },
+  { value: "2", label: "Fevral" },
+  { value: "3", label: "Mart" },
+  { value: "4", label: "Aprel" },
+  { value: "5", label: "May" },
+  { value: "6", label: "Iyun" },
+  { value: "7", label: "Iyul" },
+  { value: "8", label: "Avgust" },
+  { value: "9", label: "Sentabr" },
+  { value: "10", label: "Oktabr" },
+  { value: "11", label: "Noyabr" },
+  { value: "12", label: "Dekabr" },
+]
+export const CURRENT_YEAR = new Date().getFullYear()
+export const YEARS = Array.from({ length: 10 }, (_, i) => CURRENT_YEAR - i)
+export const DEFAULT_WORKER_VALUES = {
   // id?: number;
   // status?: 0,
   // created_at?: null,
@@ -84,7 +118,6 @@ export const workerDefaultValues: TWorkers = {
   state_id:  null,
   state_name: null,
 }
-
 export const DEFAULT_META_DATA = {
   current_page: 1, 
   from: 1, 

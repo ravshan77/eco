@@ -5,24 +5,24 @@ import { toast } from '@/components/ui/use-toast';
 import { Button } from '../../components/ui/button';
 import { Pagination } from '@/components/pagination';
 import AddOrderModal from './components/AddOrderModal';
-import { useState, useEffect, ChangeEvent } from 'react';
 import EditOrderModal from './components/EditOrderModal';
+import { useState, useEffect, ChangeEvent } from 'react';
 import { DeleteOrderModal } from './components/DeleteOrderModal';
 import { LoadingOverlay } from '@/components/ui/loading-overlay';
-import { ChevronLeft, PenLine, Plus, Settings, Trash2 } from 'lucide-react';
+import { ChevronLeft, PenLine, Plus, Settings2, Trash2 } from 'lucide-react';
+import { DEFAULT_META_DATA, MONTHS, WORKER_STATUS_INFO, YEARS } from '@/constants';
 import { GetWorkersOrders, workersOrdersAPI } from '@/services/workersOrders.service';
-import { PaginationMeta,  WorkerOrdersStatusEnum, TWorkersOrders } from '@/types/types';
-import { DEFAULT_META_DATA, MONTHS, StatusInfo, WORKER_STATUS_INFO, YEARS } from '@/constants';
+import { PaginationMeta,  WorkerOrdersStatusEnum, TWorkersOrders, StatusInfo } from '@/types/types';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 
 export default function WorkersOrders() {
   // STETS
-  const [data, setData] = useState<TWorkersOrders[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [data, setData] = useState<TWorkersOrders[]>([]);
+  const [isOpenAddModal, setOpenAddModal] = useState(false);
   const [filtersQuery, setFiltersQuery] = useState({ search:"" });
   const [meta, setMeta] = useState<PaginationMeta>(DEFAULT_META_DATA);
-  const [isOpenAddModal, setOpenAddModal] = useState(false);
   const [isOpenEditModal, setOpenEditModal] = useState<TWorkersOrders | null>(null);
   const [isDeleteModal, setOpenDeleteModal] = useState<TWorkersOrders | null>(null);
 
@@ -38,7 +38,6 @@ export default function WorkersOrders() {
     fetchData({ filters: filtersQuery, page_number:1 });
   }, []);
   
-
   const fetchData = async ({ filters, page_number } : GetWorkersOrders) => {
     setIsLoading(true);
     try {
@@ -127,21 +126,21 @@ export default function WorkersOrders() {
 
           <div className="rounded-md border overflow-auto max-h-[64vh]">
             <table className="w-full min-w-[640px] border-separate border-spacing-0">
-              {/* TEPADAGI HEADER QISMI */}
+              {/* THEADER */}
               <thead className="bg-white dark:bg-black sticky top-0 z-20 shadow-md border-b-2 border-gray-400">
                 <tr className="border-b h-12 border-gray-300">
-                  <th className="p-2 text-left w-8 border border-gray-300">№</th>
-                  <th className="p-2 text-left w-[110px] border border-gray-300">Sana</th>
-                  <th className="p-2 text-left w-[140px] border border-gray-300">Buyruq raqami</th>
-                  <th className="p-2 text-left w-max-44 border border-gray-300">Xodim</th>
-                  <th className="p-2 text-left w-48 border border-gray-300">Status</th>
-                  <th className="p-2 text-left max-w-44 border border-gray-300">Ma'sul xodim</th>
-                  <th className="p-2 text-left w-28 border border-gray-300">Izoh</th>
-                  <th className="p-2 text-center w-8 border border-gray-300"> <div className='flex justify-center'><Settings /></div></th>
+                  <th className="p-2 text-center w-8 border border-gray-300">№</th>
+                  <th className="p-2 text-center w-[110px] border border-gray-300">Sana</th>
+                  <th className="p-2 text-center w-[140px] border border-gray-300">Buyruq raqami</th>
+                  <th className="p-2 text-center w-max-44 border border-gray-300">Xodim</th>
+                  <th className="p-2 text-center w-48 border border-gray-300">Status</th>
+                  <th className="p-2 text-center max-w-44 border border-gray-300">Ma'sul xodim</th>
+                  <th className="p-2 text-center w-28 border border-gray-300">Izoh</th>
+                  <th className="p-2 text-center w-8 border border-gray-300"> <div className='flex justify-center'><Settings2 /></div></th>
                 </tr>
               </thead>
 
-              {/* BODY QISMI */}
+              {/* TBODY */}
               <tbody className="cursor-pointer">
                 {data?.map((wkr, ind) => (
                   <tr key={wkr.id} className="border-b border-gray-300">

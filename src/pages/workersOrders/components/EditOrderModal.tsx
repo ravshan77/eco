@@ -15,19 +15,19 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/comp
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const orderSchema = z.object({
+  order_date: z.string(),
+  id: z.number().optional(),
+  description: z.string().nullable().optional(),
   worker_id: z.number({required_error:"Xodim tanlang"}).min(1, "Xodim tanlang"),
   order_status: z.number({required_error:"Buyruq statusini tanlang"}).min(1, "Buyruq statusni tanlang"),
-  order_date: z.string(),
-  description: z.string().optional(),
-  id: z.number().optional(),
 });
 
 interface Props {
   open: boolean;
   filtersQuery?: any;
   data: TWorkersOrders;
-  fetchData: (params: GetWorkersOrders) => Promise<void>;
   onOpenChange: (open: boolean) => void;
+  fetchData: (params: GetWorkersOrders) => Promise<void>;
 }
 
 const EditOrderModal = ({ open, onOpenChange, fetchData, data, filtersQuery={} }: Props) => {
@@ -36,7 +36,6 @@ const EditOrderModal = ({ open, onOpenChange, fetchData, data, filtersQuery={} }
   const form = useForm<TWorkersOrders>({ resolver: zodResolver(orderSchema), disabled: loading, values: data });
   const { control, setValue, formState: { errors }, handleSubmit, watch, reset } = form;
  
-
   const onSubmit = async (data: TWorkersOrders) => { 
     setLoading(true);
     try {

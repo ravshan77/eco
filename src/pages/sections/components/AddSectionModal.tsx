@@ -29,7 +29,7 @@ const AddSectionModal = ({ open, onOpenChange, fetchData }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<FormData>({ resolver: zodResolver(sectionsSchema) });
-  const { handleSubmit, register, formState } = form
+  const { handleSubmit, register, formState , reset} = form
 
   const onSubmit = async (data: FormData) => {
     try {
@@ -38,6 +38,7 @@ const AddSectionModal = ({ open, onOpenChange, fetchData }: Props) => {
       if (response.status) {
         toast({ title: "Muvaffaqiyatli", description: "Yangi bo'lim qo'shildi" });
         fetchData()
+        reset()
         onOpenChange(false)
       }else {
         throw new Error(response.error.message)

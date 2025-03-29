@@ -18,9 +18,10 @@ import { sectionsAPI } from "@/services/sections.service";
 import { positionsAPI } from "@/services/positions.service";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 import { formatPhoneNumber } from "@/utils/formatPhoneNumber";
-import { EDUCATION_STATUS, WORKER_STATUS, workerDefaultValues } from "@/constants";
+import { EDUCATION_STATUS, WORKER_STATUS, DEFAULT_WORKER_VALUES } from "@/constants";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
 
 const workerSchema = z.object({
   birthday: z.string(),
@@ -48,13 +49,11 @@ export default function AddWorkerPage() {
 
   const form = useForm<TWorkers>({ resolver: zodResolver(workerSchema), disabled: loading, shouldUnregister: false });
   const { control, setValue, formState: { errors }, handleSubmit, watch } = form;
-  const image_path = watch("photo");
+  const image_path = watch("photo")
   const state_id = watch("state_id")
   const section_id = watch("section_id")
 
   useEffect(() => {
-    let isMounted = true;
-
     setLoading(true);
     const fetchOptionsDate = async () => {
       try {
@@ -69,12 +68,7 @@ export default function AddWorkerPage() {
         setLoading(false);
       }
     };
-    fetchOptionsDate()
-
-    return () => {
-      isMounted = false;
-    };
-  
+    fetchOptionsDate()  
   },[])
 
   const onSubmit = async (data: TWorkers) => { 
@@ -83,7 +77,7 @@ export default function AddWorkerPage() {
       const response = await workersAPI.create(data);
       if (response.status) {
         toast({ title: "Muvaffaqiyatli", description: "Yangi xodim qo'shildi"});
-        // navigate (`/workers/edit-worker/${response.resoult.id}`)
+        navigate (-1)
       }else {
         throw new Error(response.error.message)
       }
@@ -117,7 +111,7 @@ export default function AddWorkerPage() {
   };
 
   const handleImageDelete = async (file_path:string) => {
-    if (!image_path) return;
+    if (!file_path) return;
     setLoading(true);
     try {
       const response = await workersAPI.deleteImage(file_path);
@@ -134,20 +128,7 @@ export default function AddWorkerPage() {
     }
   };
 
-  const handleGoBack = () => {
-    const chack_equla_values = areObjectsEqual(watch(), workerDefaultValues);
-
-    if(chack_equla_values) {
-      navigate(-1);
-      return
-    }
-  
-    const confirmChange = window.confirm("Oxirgi kiritgan ma'lumotlaringiz saqlanmaydi?");
-    if(confirmChange) {
-      navigate(-1);
-    }
-    return
-  };
+  const handleGoBack = () => navigate(-1);
 
   const getRegionsByStateId = async (stateId: number) => { 
     try {
@@ -436,7 +417,7 @@ export default function AddWorkerPage() {
                     <div className="mt-4 relative">
                       <PhotoProvider>
                         <PhotoView src={`${base + image_path}`}>
-                          <img src={`${base + image_path}`} alt="Xodim rasmi" className="w-full h-72 object-cover rounded-md"/>
+                          <img src={`${base + image_path}`} alt="Xodim rasmi" className="w-full h-72 object-cover border rounded-md"/>
                         </PhotoView>
                       </PhotoProvider>
                       <Button variant="destructive" type="button" className="mt-2 absolute cursor-pointer bottom-1 right-1" onClick={() => handleImageDelete(image_path)} disabled={loading}>

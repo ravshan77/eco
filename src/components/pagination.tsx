@@ -38,17 +38,14 @@ export const Pagination = ({ fetchPage, current_page, total_pages, filtersQuery=
       
   const pages = getPaginationItems(current_page, numberOfFloor(total_pages, meta.per_page));
     
-
   return (
     <PaginantionShadcn>
       <PaginationContent>
         <PaginationItem>
-          <PaginationPrevious onClick={() => fetchPage({ filters: filtersQuery, page_number: current_page - 1})} className={current_page === 1 ? "pointer-events-none opacity-50" : ""}>
-            Oldingi 
-          </PaginationPrevious>
+          <PaginationPrevious onClick={() => fetchPage({ filters: filtersQuery, page_number: current_page - 1})} className={current_page === 1 ? "pointer-events-none opacity-50" : ""} />
         </PaginationItem>
         
-        {/* Sahifa raqamlari */}
+        {/* page numbers */}
         {pages.map((page, index) => (
           <PaginationItem key={index}>
             {page === "ellipsis" ? <PaginationEllipsis /> : <PaginationLink isActive={page === current_page} onClick={() => fetchPage({ filters: filtersQuery, page_number: page}) }>{page}</PaginationLink>}
@@ -56,9 +53,7 @@ export const Pagination = ({ fetchPage, current_page, total_pages, filtersQuery=
         ))}
 
         <PaginationItem>
-          <PaginationNext onClick={() => fetchPage({ filters: filtersQuery, page_number: current_page + 1}) } className={(current_page === total_pages) || (total_pages === 1)  ? "pointer-events-none opacity-50" : ""} >
-            Kiyingi
-          </PaginationNext>
+          <PaginationNext onClick={() => fetchPage({ filters: filtersQuery, page_number: current_page + 1}) } className={(current_page === meta.last_page)  ? "pointer-events-none opacity-50" : ""} />
         </PaginationItem>
       </PaginationContent>
     </PaginantionShadcn>

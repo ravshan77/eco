@@ -2,13 +2,13 @@ import * as z from 'zod';
 import { memo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Input } from '@/components/ui/input';
+import { TTaskCategory } from '@/types/types';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { TAssigmentCategory } from '@/types/types';
 import { LoadingOverlay } from '@/components/ui/loading-overlay';
-import { assigmenCategorytAPI } from '@/services/assigmentCategory.service';
+import { taskCategoryApi } from '@/services/taskCategory.service';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 const positionSchema = z.object({
@@ -23,12 +23,12 @@ type FormData = z.infer<typeof positionSchema>;
 
 interface Props {
   open: boolean;
-  data: TAssigmentCategory;
+  data: TTaskCategory;
   fetchData: () => Promise<void>;
-  onOpenChange: (open: TAssigmentCategory) => void;
+  onOpenChange: (open: TTaskCategory) => void;
 }
 
-export const EditAssigmentCategoryModal = memo(({ open, onOpenChange, fetchData, data }: Props) => {
+export const EditTaskCategoryModal = memo(({ open, onOpenChange, fetchData, data }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm<FormData>({ resolver: zodResolver(positionSchema), values: data });
   const { handleSubmit, register, formState } = form
@@ -38,7 +38,7 @@ export const EditAssigmentCategoryModal = memo(({ open, onOpenChange, fetchData,
   const onSubmit = async (data: FormData) => {
     try {
       setIsLoading(true);
-      const response = await assigmenCategorytAPI.update(data);
+      const response = await taskCategoryApi.update(data);
       if (response.status) {
         toast({ title: "Muvaffaqiyatli", description: "Topshiriq kategoriyasi tahrirlandi" });
         fetchData()
@@ -55,7 +55,7 @@ export const EditAssigmentCategoryModal = memo(({ open, onOpenChange, fetchData,
 
 
   return (
-    <Dialog open={open.valueOf()} onOpenChange={handleClose} modal={true}>
+    <Dialog open={open?.valueOf()} onOpenChange={handleClose} modal={true}>
       <DialogContent onInteractOutside={(e) => e.preventDefault()}>
       {isLoading && <LoadingOverlay />}
         <DialogHeader>
